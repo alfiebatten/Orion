@@ -39,6 +39,11 @@ export default {
       type: String,
       required: false,
       default: "0px"
+    },
+    renderedOpacity: {
+      type: Number,
+      required: false,
+      default: 0.75
     }
   },
   mounted: function() {
@@ -53,14 +58,14 @@ export default {
     animateElements({
       targets: configData.primaryTitle,
       delay: configData.props.mainTitleDelay,
-      opacity: 0.75,
+      opacity: configData.props.renderedOpacity,
       duration: configData.props.secondaryDurations / 2,
       translateX: ["-50px", "0px"],
       easing: "easeOutCubic",
       begin: () =>
         animateElements({
           targets: [configData.subTitle, configData.initiaterButton],
-          opacity: 0.75,
+          opacity: configData.props.renderedOpacity,
           duration: configData.props.secondaryDurations,
           easing: "easeOutCubic",
           delay: function(_, currentKeyframe) {
