@@ -93,6 +93,13 @@ export default {
     opacity: 0
     font-family: 'Montserrat', sans-serif
 
+    b {
+    	background-image: linear-gradient(to right, #652060, #34ccc6)
+      background-size: 200% auto
+    	-webkit-background-clip: text
+    	-webkit-text-fill-color: transparent
+    }
+
   h3
     margin-top: -10px
     color: #212121
