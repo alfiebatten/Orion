@@ -12,6 +12,7 @@
         <div
           class = "deviceCard"
           v-for="controlOptions in controlFunctions"
+          v-key="controlOptions.functionName"
           v-bind:class = "[controlOptions.requiresInput ? 'expandCard' : '']"
         >
           <div
@@ -23,10 +24,10 @@
 
             <div v-if = "controlOptions.requiresInput" class = "iconAndInputComponent">
               <div class = "inputContainer">
-                <input></input>
+                <input v-bind:placeholder="controlOptions.placeHolder">
               </div>
               <div class = "iconContainer">
-                <i v-on:click = "prepareExecution(controlOptions, $event, "INPUT")" class="material-icons icon">{{ controlOptions.enabled ? 'chevron_right' : 'close' }}</i>
+                <i v-on:click = "prepareExecution(controlOptions, $event, 'requiresInput')" class="material-icons icon">{{ controlOptions.enabled ? 'chevron_right' : 'close' }}</i>
               </div>
             </div>
 
@@ -81,7 +82,19 @@ export default {
     });
   },
   methods: {
-    prepareExecution: function(identifier, eventElement, additionalData) {},
+    prepareExecution: function(identifier, eventElement, requiresInput) {
+      if (!identifier.enabled) return;
+      if (requiresInput) {
+        let userInput = eventElement.target.parentElement.parentElement
+          .getElementsByClassName("inputContainer")[0]
+          .getElementsByTagName("input")[0].value;
+        if (userInput !== "") {
+          identifier.function(userInput);
+        }
+      } else {
+        identifier.function();
+      }
+    },
     LoadControls: function(computerName) {
       let divElement = this.$el;
 
@@ -132,11 +145,10 @@ export default {
         {
           functionName: "Execute shell",
           requiresInput: true,
+          placeHolder: "echo 'Hello world'",
           enabled: true,
-          function: controlOptions => {
-            if (!controlOptions.enabled) return;
-
-            console.log("Executing shell: ");
+          function: input => {
+            this.$sockets.emit("uniqueRoomNumber", input); // Implement functionality
           }
         },
         {
@@ -162,21 +174,25 @@ export default {
         {
           functionName: "Change background",
           requiresInput: true,
+          placeHolder: "URL",
           enabled: true
         },
         {
           functionName: "Open URL",
           requiresInput: true,
+          placeHolder: "URL",
           enabled: true
         },
         {
           functionName: "Set profile picture",
           requiresInput: true,
+          placeHolder: "URL",
           enabled: true
         },
         {
           functionName: "Send notification",
           requiresInput: true,
+          placeHolder: "Hello World",
           enabled: true
         }
       ]
