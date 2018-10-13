@@ -42,9 +42,6 @@ export default {
       default: "-=20em"
     }
   },
-  watcher: {
-    isData: function() {}
-  },
   mounted: function() {
     EventBus.$on("initiateTopologyLoader", () => {
       this.LoadTopology();
@@ -69,7 +66,12 @@ export default {
         transformX: [
           configData.SVGprops.initialTransformX,
           configData.SVGprops.finalTransformX
-        ]
+        ],
+        begin: () =>
+          setTimeout(
+            () => EventBus.$emit("showDeviceList"),
+            configData.SVGpaths.length * 10
+          )
       });
     }
   }

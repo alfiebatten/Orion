@@ -48,7 +48,7 @@ export default {
     }
   },
   methods: {
-    loadDevicePicker: async function() {
+    loadDevicePicker: function() {
       let divElement = this.$el;
 
       let configData = {

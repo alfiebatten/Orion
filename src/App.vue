@@ -1,8 +1,7 @@
 <template>
   <div id="app">
-
     <gradientBackgroundTopology
-      :delay = "100"
+      :delay = "50"
       ref = "referenceGradientBackgroundTopology"
       animated
     ></gradientBackgroundTopology>
@@ -14,18 +13,22 @@
       finalTransformX = "0px"
     ></initialLoadingSegment>
 
+    <devicePicker></devicePicker>
+
   </div>
 </template>
 
 <script>
 import gradientBackgroundTopology from "./components/gradientBackgroundTopology.vue";
 import initialLoadingSegment from "./components/initialLoadingSegment.vue";
+import devicePicker from "./components/devicePicker.vue";
 
 export default {
   name: "app",
   components: {
     gradientBackgroundTopology,
-    initialLoadingSegment
+    initialLoadingSegment,
+    devicePicker
   }
 };
 </script>
