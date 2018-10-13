@@ -2,7 +2,7 @@
   <div class="connectedClientContainer">
     <div class = "connectedListTitle">
       <h2>
-        <b>3</b>
+        <b>{{ userData.length }}</b>
         Connected clients
       </h2>
     </div>
@@ -12,8 +12,8 @@
         <div
           class = "deviceCard"
           v-for="user in userData"
-          v-bind:key = "user"
           v-bind:class = "[user.enabled ? 'onlineTransform' : 'offlineTransform']"
+          v-on:click = "showControlOptions( user.enabled, user.computerName )"
         >
           <div class = "titleComponent">
             <h1>{{ user.computerName }}</h1>
@@ -59,7 +59,7 @@ export default {
     renderedOpacity: {
       type: Number,
       required: false,
-      default: 0.75
+      default: 1
     }
   },
   mounted: function() {
@@ -68,7 +68,8 @@ export default {
     });
   },
   methods: {
-    LoadDevices: function() {
+    showControlOptions: function(cardEnabled, cardElement) {
+      if (!cardEnabled) return;
       let divElement = this.$el;
 
       let configData = {
@@ -82,7 +83,51 @@ export default {
         props: this._props
       };
 
-      divElement.style.zIndex = "30";
+      animateElements({
+        targets: configData.primaryTitle,
+        delay: configData.props.mainTitleDelay,
+        opacity: -configData.props.renderedOpacity,
+        duration: configData.props.secondaryDurations / 2,
+        translateX: [
+          configData.props.finalTransformX,
+          configData.props.initialTransformX
+        ],
+        easing: "easeOutCubic",
+        begin: () =>
+          animateElements({
+            targets: configData.deviceCards,
+            opacity: -configData.props.renderedOpacity,
+            duration: configData.props.secondaryDurations / 2,
+            delay: function(_, currentKeyframe) {
+              return (
+                (currentKeyframe * configData.props.secondaryDurations) / 10
+              );
+            },
+            complete: () => {
+              divElement.style.zIndex = "-1";
+            },
+            begin: () =>
+              setTimeout(
+                () => EventBus.$emit("initiateController", cardElement),
+                configData.deviceCards * 10
+              )
+          })
+      });
+    },
+    LoadDevices: function() {
+      let divElement = this.$el;
+
+      let configData = {
+        primaryTitle: divElement
+          .getElementsByClassName("connectedListTitle")[0]
+          .getElementsByTagName("h2")[0],
+        deviceCards: divElement
+          .getElementsByClassName("mainContainerPicker")[0]
+          .getElementsByClassName("devicePicker")[0]
+          .getElementsByClassName("deviceCard"),
+        props: this._props
+      };
+      divElement.style.zIndex = "5";
 
       animateElements({
         targets: configData.primaryTitle,
@@ -133,7 +178,7 @@ export default {
         },
         {
           computerName: "The TARDIS",
-          enabled: false
+          enabled: true
         }
       ]
     };
@@ -191,6 +236,7 @@ export default {
         font-family: 'Montserrat', sans-serif
         text-transform: uppercase
         color: $whitePrimary
+        mix-blend-mode: difference
         font-weight: 300
         opacity: 0
 
