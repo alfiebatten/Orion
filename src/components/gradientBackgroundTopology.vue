@@ -21,6 +21,7 @@
 
 <script>
 import animateElements from "animejs";
+import { EventBus } from "../eventBus.js";
 
 export default {
   name: "gradientBackgroundTopology",
@@ -42,10 +43,15 @@ export default {
     }
   },
   watcher: {
-    a: false
+    isData: function() {}
+  },
+  mounted: function() {
+    EventBus.$on("initiateTopologyLoader", () => {
+      this.LoadTopology();
+    });
   },
   methods: {
-    onLoadTopology: function() {
+    LoadTopology: function() {
       let svgElement = this.$el
         .getElementsByTagName("div")[0]
         .getElementsByTagName("svg")[0];

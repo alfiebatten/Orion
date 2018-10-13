@@ -16,6 +16,7 @@
 
 <script>
 import animateElements from "animejs";
+import { EventBus } from "../eventBus.js";
 
 export default {
   name: "initialLoadingSegment",
@@ -47,7 +48,7 @@ export default {
     }
   },
   methods: {
-    loadDevicePicker: function() {
+    loadDevicePicker: async function() {
       let divElement = this.$el;
 
       let configData = {
@@ -78,13 +79,10 @@ export default {
               return (
                 (currentKeyframe * configData.props.secondaryDurations) / 10
               );
-            }
+            },
+            complete: () => EventBus.$emit("initiateTopologyLoader")
           })
       });
-
-      //$emit (
-      //  "LoadTopology"
-      //)
     }
   },
   mounted: function() {
