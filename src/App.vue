@@ -1,26 +1,33 @@
 <template>
   <div id="app">
-    <img alt="Vue logo" src="./assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
+    <!--
+      <gradientBackgroundTopology delay = "100" animated></gradientBackgroundTopology>
+      We don't want to load this quiet yet!
+    -->
   </div>
 </template>
 
 <script>
-import HelloWorld from "./components/HelloWorld.vue";
+import gradientBackgroundTopology from "./components/gradientBackgroundTopology.vue";
 
 export default {
   name: "app",
   components: {
-    HelloWorld
+    gradientBackgroundTopology
   }
 };
 </script>
+
 <style lang="stylus">
-#app
-  font-family 'Avenir', Helvetica, Arial, sans-serif
-  -webkit-font-smoothing antialiased
-  -moz-osx-font-smoothing grayscale
-  text-align center
-  color #2c3e50
-  margin-top 60px
+  body, html
+    margin: 0
+
+  #app
+    display: grid
+    height: 100vh
+    grid-template-columns: repeat(auto-fit, minmax(600px, 1fr))
+    grid-template-rows: auto
+    grid-gap: 6px
+    background-color: #f5f6fa
+    overflow: none
 </style>
