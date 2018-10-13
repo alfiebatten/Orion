@@ -1,18 +1,19 @@
 <template>
   <div id="app">
-    <!--
-      <gradientBackgroundTopology
-        delay = "100"
-        animated
-      ></gradientBackgroundTopology>
-      We don't want to load this quiet yet!
-    -->
+
+    <gradientBackgroundTopology
+      :delay = "100"
+      ref = "referenceGradientBackgroundTopology"
+      animated
+    ></gradientBackgroundTopology>
+
     <initialLoadingSegment
       :mainTitleDelay = "500"
       :secondaryDurations = "500"
       initialTransformX = "500px"
       finalTransformX = "0px"
     ></initialLoadingSegment>
+
   </div>
 </template>
 

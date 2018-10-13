@@ -8,7 +8,7 @@
       Awaiting directory [ Placeholder ]
     </h3>
 
-    <button>
+    <button v-on:click = "loadDevicePicker">
       Initiate
     </button>
   </div>
@@ -33,7 +33,7 @@ export default {
     initialTransformX: {
       type: String,
       required: false,
-      default: "500px"
+      default: "50px"
     },
     finalTransformX: {
       type: String,
@@ -44,6 +44,47 @@ export default {
       type: Number,
       required: false,
       default: 0.75
+    }
+  },
+  methods: {
+    loadDevicePicker: function() {
+      let divElement = this.$el;
+
+      let configData = {
+        primaryTitle: divElement.getElementsByTagName("h1"),
+        subTitle: divElement.getElementsByTagName("h3"),
+        initiaterButton: divElement.getElementsByTagName("button"),
+        props: this._props
+      };
+
+      // Cause elements to fade away
+      animateElements({
+        targets: configData.primaryTitle,
+        delay: configData.props.mainTitleDelay,
+        opacity: -configData.props.renderedOpacity,
+        duration: configData.props.secondaryDurations / 2,
+        translateX: [
+          configData.props.finalTransformX,
+          configData.props.initialTransformX
+        ],
+        easing: "easeOutCubic",
+        begin: () =>
+          animateElements({
+            targets: [configData.subTitle, configData.initiaterButton],
+            opacity: -configData.props.renderedOpacity,
+            duration: configData.props.secondaryDurations,
+            easing: "easeOutCubic",
+            delay: function(_, currentKeyframe) {
+              return (
+                (currentKeyframe * configData.props.secondaryDurations) / 10
+              );
+            }
+          })
+      });
+
+      //$emit (
+      //  "LoadTopology"
+      //)
     }
   },
   mounted: function() {
@@ -60,7 +101,10 @@ export default {
       delay: configData.props.mainTitleDelay,
       opacity: configData.props.renderedOpacity,
       duration: configData.props.secondaryDurations / 2,
-      translateX: ["-50px", "0px"],
+      translateX: [
+        configData.props.initialTransformX,
+        configData.props.finalTransformX
+      ],
       easing: "easeOutCubic",
       begin: () =>
         animateElements({
@@ -79,6 +123,7 @@ export default {
 
 <style scoped lang="stylus">
 .initialLoadingSegment
+  position: absolute
   text-align: center
   width: 100vw
   z-index: 2

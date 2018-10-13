@@ -41,27 +41,33 @@ export default {
       default: "-=20em"
     }
   },
-  mounted: function() {
-    let svgElement = this.$el
-      .getElementsByTagName("div")[0]
-      .getElementsByTagName("svg")[0];
-    let configData = {
-      SVGpaths: svgElement.getElementsByTagName("path"),
-      SVGprops: this._props
-    };
+  watcher: {
+    a: false
+  },
+  methods: {
+    onLoadTopology: function() {
+      let svgElement = this.$el
+        .getElementsByTagName("div")[0]
+        .getElementsByTagName("svg")[0];
+      let configData = {
+        SVGpaths: svgElement.getElementsByTagName("path"),
+        SVGprops: this._props
+      };
 
-    animateElements({
-      targets: configData.SVGpaths,
-      opacity: [0, 1],
-      delay: function(_, currentKeyframe) {
-        return currentKeyframe * configData.SVGprops.delay;
-      },
-      transformX: [
-        configData.SVGprops.initialTransformX,
-        configData.SVGprops.finalTransformX
-      ]
-    });
+      animateElements({
+        targets: configData.SVGpaths,
+        opacity: [0, 1],
+        delay: function(_, currentKeyframe) {
+          return currentKeyframe * configData.SVGprops.delay;
+        },
+        transformX: [
+          configData.SVGprops.initialTransformX,
+          configData.SVGprops.finalTransformX
+        ]
+      });
+    }
   }
+  //mounted:
 };
 </script>
 
