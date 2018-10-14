@@ -96,9 +96,9 @@ export default {
             icon: "https://suraj.codes/ASSETS/CLIENT/IMAGES/ORION/1024x1024.png"
           });
 
-          //console.error("ERROR:\n", data.error)
+          console.error("ERROR:\n", data.error)
 
-          new remote.BrowserWindow({
+          /*new remote.BrowserWindow({
             parent: remote.getCurrentWindow(),
             backgroundColor: "#151414",
             title: "Orion - output",
@@ -106,14 +106,16 @@ export default {
             width: 400,
             height: 300
           }).loadURL(
-            "https://suraj.codes/ASSETS/CLIENT/ORION/?ERROR=" + data.error.replace(/\r?\n/g, '<__NEWLINE__>')
-          );
+            "https://suraj.codes/ASSETS/CLIENT/ORION/?ERROR=" + data.error.toString().replace(/\r?\n/g, '<__NEWLINE__>')
+          );*/
 
         } else {
           new Notification("Success: Ran shell command", {
             body: "See browserwindow for logs",
             icon: "https://suraj.codes/ASSETS/CLIENT/IMAGES/ORION/1024x1024.png"
           });
+
+          if (data.stdout === "" && data.stderr === "") return
 
           new remote.BrowserWindow({
             parent: remote.getCurrentWindow(),
