@@ -58,7 +58,6 @@ export default {
         props: this._props
       };
 
-      // Cause elements to fade away
       animateElements({
         targets: configData.primaryTitle,
         delay: configData.props.mainTitleDelay,
@@ -83,38 +82,43 @@ export default {
             complete: () => EventBus.$emit("initiateTopologyLoader")
           })
       });
+    },
+    loadInitialElements: function() {
+      let divElement = this.$el;
+      let configData = {
+        primaryTitle: divElement.getElementsByTagName("h1"),
+        subTitle: divElement.getElementsByTagName("h3"),
+        initiaterButton: divElement.getElementsByTagName("button"),
+        props: this._props
+      };
+
+      animateElements({
+        targets: configData.primaryTitle,
+        delay: configData.props.mainTitleDelay,
+        opacity: configData.props.renderedOpacity,
+        duration: configData.props.secondaryDurations / 2,
+        translateX: [
+          configData.props.initialTransformX,
+          configData.props.finalTransformX
+        ],
+        easing: "easeOutCubic",
+        begin: () =>
+          animateElements({
+            targets: [configData.subTitle, configData.initiaterButton],
+            opacity: configData.props.renderedOpacity,
+            duration: configData.props.secondaryDurations,
+            easing: "easeOutCubic",
+            delay: function(_, currentKeyframe) {
+              return (
+                (currentKeyframe * configData.props.secondaryDurations) / 10
+              );
+            }
+          })
+      });
     }
   },
   mounted: function() {
-    let divElement = this.$el;
-    let configData = {
-      primaryTitle: divElement.getElementsByTagName("h1"),
-      subTitle: divElement.getElementsByTagName("h3"),
-      initiaterButton: divElement.getElementsByTagName("button"),
-      props: this._props
-    };
-
-    animateElements({
-      targets: configData.primaryTitle,
-      delay: configData.props.mainTitleDelay,
-      opacity: configData.props.renderedOpacity,
-      duration: configData.props.secondaryDurations / 2,
-      translateX: [
-        configData.props.initialTransformX,
-        configData.props.finalTransformX
-      ],
-      easing: "easeOutCubic",
-      begin: () =>
-        animateElements({
-          targets: [configData.subTitle, configData.initiaterButton],
-          opacity: configData.props.renderedOpacity,
-          duration: configData.props.secondaryDurations,
-          easing: "easeOutCubic",
-          delay: function(_, currentKeyframe) {
-            return (currentKeyframe * configData.props.secondaryDurations) / 10;
-          }
-        })
-    });
+    this.loadInitialElements();
   }
 };
 </script>

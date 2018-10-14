@@ -15,7 +15,6 @@
     ></initialLoadingSegment>
 
     <devicePicker></devicePicker>
-
     <deviceController></deviceController>
 
   </div>

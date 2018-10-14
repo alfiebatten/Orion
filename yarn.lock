@@ -2664,6 +2664,10 @@ dashdash@^1.12.0:
   dependencies:
     assert-plus "^1.0.0"
 
+dataurl@^0.1.0:
+  version "0.1.0"
+  resolved "https://registry.yarnpkg.com/dataurl/-/dataurl-0.1.0.tgz#1f4734feddec05ffe445747978d86759c4b33199"
+
 date-fns@^1.27.2:
   version "1.29.0"
   resolved "https://registry.yarnpkg.com/date-fns/-/date-fns-1.29.0.tgz#12e609cdcb935127311d04d33334e2960a2a54e6"
@@ -3706,6 +3710,12 @@ find-cache-dir@^1.0.0:
     commondir "^1.0.1"
     make-dir "^1.0.0"
     pkg-dir "^2.0.0"
+
+find-exec@1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/find-exec/-/find-exec-1.0.0.tgz#65249cd524de08050531d9d0b84ad2ee1ab727c9"
+  dependencies:
+    sync-exec "^0.6.2"
 
 find-npm-prefix@^1.0.2:
   version "1.0.2"
@@ -6733,6 +6743,12 @@ pkg-dir@^3.0.0:
   dependencies:
     find-up "^3.0.0"
 
+play-sound@^1.1.2:
+  version "1.1.2"
+  resolved "https://registry.yarnpkg.com/play-sound/-/play-sound-1.1.2.tgz#aaca3047692af571c0d3a9dc475a5fa7c21322c5"
+  dependencies:
+    find-exec "1.0.0"
+
 please-upgrade-node@^3.0.2:
   version "3.1.1"
   resolved "https://registry.yarnpkg.com/please-upgrade-node/-/please-upgrade-node-3.1.1.tgz#ed320051dfcc5024fae696712c8288993595e8ac"
@@ -8505,6 +8521,10 @@ svgo@^1.0.0:
 symbol-observable@^1.1.0:
   version "1.2.0"
   resolved "https://registry.yarnpkg.com/symbol-observable/-/symbol-observable-1.2.0.tgz#c22688aed4eab3cdc2dfeacbb561660560a00804"
+
+sync-exec@^0.6.2:
+  version "0.6.2"
+  resolved "https://registry.yarnpkg.com/sync-exec/-/sync-exec-0.6.2.tgz#717d22cc53f0ce1def5594362f3a89a2ebb91105"
 
 table@4.0.2:
   version "4.0.2"

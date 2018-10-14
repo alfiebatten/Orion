@@ -12,11 +12,11 @@
         <div
           class = "deviceCard"
           v-for="controlOptions in controlFunctions"
-          v-key="controlOptions.functionName"
+          :key="controlOptions.functionName"
           v-bind:class = "[controlOptions.requiresInput ? 'expandCard' : '']"
         >
           <div
-            v-bind:class = "[controlOptions.enabled ? 'onlineTransform' : 'offlineTransform']"
+            v-bind:class = "[controlOptions.enabled && controlOptions.function ? 'onlineTransform' : 'offlineTransform']"
           >
             <div class = "titleComponent">
               <h1>{{ controlOptions.functionName }}</h1>
@@ -24,16 +24,19 @@
 
             <div v-if = "controlOptions.requiresInput" class = "iconAndInputComponent">
               <div class = "inputContainer">
-                <input v-bind:placeholder="controlOptions.placeHolder">
+                <input
+                  v-bind:placeholder = "controlOptions.placeHolder"
+                  v-bind:value = "nessescaryFunctions.Store.get(controlOptions.functionName)"
+                >
               </div>
               <div class = "iconContainer">
-                <i v-on:click = "prepareExecution(controlOptions, $event, 'requiresInput')" class="material-icons icon">{{ controlOptions.enabled ? 'chevron_right' : 'close' }}</i>
+                <i v-on:click = "prepareExecution(controlOptions, $event, 'requiresInput')" class="material-icons icon">{{ controlOptions.enabled && controlOptions.function ? 'chevron_right' : 'close' }}</i>
               </div>
             </div>
 
             <div v-else class = "iconComponent single">
               <div class = "iconContainer">
-                <i v-on:click = "prepareExecution(controlOptions, $event)" class="material-icons icon">{{ controlOptions.enabled ? 'chevron_right' : 'close' }}</i>
+                <i v-on:click = "prepareExecution(controlOptions, $event)" class="material-icons icon">{{ controlOptions.enabled && controlOptions.function ? 'chevron_right' : 'close' }}</i>
               </div>
             </div>
           </div>
@@ -46,6 +49,7 @@
 <script>
 import animateElements from "animejs";
 import { EventBus } from "../eventBus.js";
+import Store from "electron-store";
 
 export default {
   name: "controlFunctions",
@@ -89,7 +93,15 @@ export default {
           .getElementsByClassName("inputContainer")[0]
           .getElementsByTagName("input")[0].value;
         if (userInput !== "") {
+          this._data.nessescaryFunctions.Store.set(
+            identifier.functionName,
+            userInput
+          );
           identifier.function(userInput);
+        } else {
+          new Notification("Failed to call designated function", {
+            body: "Input can not be blank"
+          });
         }
       } else {
         identifier.function();
@@ -141,6 +153,9 @@ export default {
   },
   data: () => {
     return {
+      nessescaryFunctions: {
+        Store: new Store()
+      },
       controlFunctions: [
         {
           functionName: "Execute shell",
@@ -148,7 +163,8 @@ export default {
           placeHolder: "echo 'Hello world'",
           enabled: true,
           function: input => {
-            this.$sockets.emit("uniqueRoomNumber", input); // Implement functionality
+            this.emit("uniqueRoomNumber", input);
+            //this.$sockets.emit("uniqueRoomNumber", input); // Implement functionality
           }
         },
         {
