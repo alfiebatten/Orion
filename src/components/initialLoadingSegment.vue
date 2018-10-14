@@ -5,7 +5,7 @@
     </h1>
 
     <h3>
-      Awaiting directory [ Placeholder ]
+      {{ Subtitle }}
     </h3>
 
     <button v-on:click = "loadDevicePicker">
@@ -47,6 +47,11 @@ export default {
       default: 0.75
     }
   },
+  data: () => {
+    return {
+      Subtitle: "Waiting for connectedClients event..."
+    }
+  },
   methods: {
     loadDevicePicker: function() {
       let divElement = this.$el;
@@ -83,7 +88,7 @@ export default {
           })
       });
     },
-    loadInitialElements: function() {
+    allocateButton: function(deviceLength){
       let divElement = this.$el;
       let configData = {
         primaryTitle: divElement.getElementsByTagName("h1"),
@@ -92,33 +97,63 @@ export default {
         props: this._props
       };
 
-      animateElements({
-        targets: configData.primaryTitle,
-        delay: configData.props.mainTitleDelay,
+      this._data.Subtitle = "Connected to " + deviceLength.toString() + " client" + (deviceLength > 1 || deviceLength === 0 ? 's' : '')
+
+      if (deviceLength > 0) animateElements({
+        targets: configData.initiaterButton,
         opacity: configData.props.renderedOpacity,
-        duration: configData.props.secondaryDurations / 2,
-        translateX: [
-          configData.props.initialTransformX,
-          configData.props.finalTransformX
-        ],
+        duration: configData.props.secondaryDurations,
         easing: "easeOutCubic",
-        begin: () =>
-          animateElements({
-            targets: [configData.subTitle, configData.initiaterButton],
-            opacity: configData.props.renderedOpacity,
-            duration: configData.props.secondaryDurations,
-            easing: "easeOutCubic",
-            delay: function(_, currentKeyframe) {
-              return (
-                (currentKeyframe * configData.props.secondaryDurations) / 10
-              );
-            }
-          })
       });
+
+    },
+    loadInitialElements: function() {
+      let vm = this;
+      return new Promise(function(resolvedPromise) {
+        let divElement = vm.$el;
+        let configData = {
+          primaryTitle: divElement.getElementsByTagName("h1"),
+          subTitle: divElement.getElementsByTagName("h3"),
+          initiaterButton: divElement.getElementsByTagName("button"),
+          props: vm._props
+        };
+
+        animateElements({
+          targets: configData.primaryTitle,
+          delay: configData.props.mainTitleDelay,
+          opacity: configData.props.renderedOpacity,
+          duration: configData.props.secondaryDurations / 2,
+          translateX: [
+            configData.props.initialTransformX,
+            configData.props.finalTransformX
+          ],
+          easing: "easeOutCubic",
+          begin: () =>
+            animateElements({
+              targets: configData.subTitle,
+              opacity: configData.props.renderedOpacity,
+              duration: configData.props.secondaryDurations,
+              easing: "easeOutCubic",
+              delay: function(_, currentKeyframe) {
+                return (
+                  (currentKeyframe * configData.props.secondaryDurations) / 10
+                );
+              },
+              complete: () => resolvedPromise()
+            })
+        });
+      })
     }
   },
-  mounted: function() {
+  mounted: async function() {
     this.loadInitialElements();
+
+    await EventBus.$on("connectedClients", parsedData => {
+      setTimeout( () =>  this.allocateButton(
+        parsedData.length
+      ), this._props.mainTitleDelay * 2)
+    });
+
   }
 };
 </script>

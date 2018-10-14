@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
+    "start": "npm install",
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
     "lint": "vue-cli-service lint",
@@ -12,11 +13,11 @@
   },
   "dependencies": {
     "animejs": "^2.2.0",
-    "dataurl": "^0.1.0",
     "electron-store": "^2.0.0",
-    "play-sound": "^1.1.2",
     "register-service-worker": "^1.0.0",
-    "vue": "^2.5.17"
+    "socket.io-client": "^2.1.1",
+    "vue": "^2.5.17",
+    "vue-resource": "^1.5.1"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "^3.0.1",

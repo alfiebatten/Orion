@@ -21,7 +21,10 @@ protocol.registerStandardSchemes(["app"], { secure: true });
 function createMainWindow() {
   const window = new BrowserWindow({
     backgroundColor: "#dcdde1",
-    titleBarStyle: "hiddenInset"
+    titleBarStyle: "hiddenInset",
+    webPreferences: {
+      webSecurity: false
+    }
   });
 
   if (isDevelopment) {

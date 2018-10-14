@@ -63,11 +63,29 @@ export default {
     }
   },
   mounted: function() {
+    this.loadDevicesIntoObj()
     EventBus.$on("showDeviceList", () => {
       this.LoadDevices();
     });
   },
   methods: {
+    loadDevicesIntoObj: function(){
+      this.$http.get(
+        "http://198.211.125.38:3000/activeClients",
+        {
+          'Access-Control-Allow-Origin': '*'
+        }
+      ).then(result => {
+        let parsedData = JSON.parse(result.bodyText);
+
+        console.log("Emitting; ", parsedData)
+        EventBus.$emit("connectedClients", parsedData);
+
+        this.userData = parsedData;
+      }, error => {
+        console.error(error);
+      });
+    },
     showControlOptions: function(cardEnabled, cardElement) {
       if (!cardEnabled) return;
       let divElement = this.$el;
@@ -155,7 +173,8 @@ export default {
   },
   data: () => {
     return {
-      userData: [
+      userData: [],
+      pseudoUserData: [
         {
           computerName: "Olivers PC",
           enabled: true
@@ -188,6 +207,16 @@ export default {
 
 <style scoped lang="stylus">
   @import "./constants.styl"
+
+  @keyframes morph
+    0%
+      border-radius: 40% 60% 60% 40% / 60% 30% 70% 40%;
+    100%
+      border-radius: 40% 60%
+
+  @keyframes spin
+    to
+      transform: rotate(1turn)
 
   replicateGrid(pushedColour)
     .titleComponent
@@ -228,14 +257,16 @@ export default {
 
     .connectedListTitle
       text-align: center
+      display: flex;
+      justify-content: center
 
       h2
         font-family: 'Montserrat', sans-serif
         text-transform: uppercase
         color: lighten($colourConst.ShadeY.Primary, 15%)
-        mix-blend-mode: difference
         font-weight: 300
         opacity: 0
+        align-self: center;
 
         b
           font-weight: 700

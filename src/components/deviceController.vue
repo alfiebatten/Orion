@@ -1,5 +1,5 @@
 <template>
-  <div class="connectedClientContainer">
+  <div class="deviceControlContainer">
     <div class = "connectedListTitle">
       <h2>
         Connected to:
@@ -50,6 +50,7 @@
 import animateElements from "animejs";
 import { EventBus } from "../eventBus.js";
 import Store from "electron-store";
+import SocketsIO from 'socket.io-client';
 
 export default {
   name: "controlFunctions",
@@ -97,14 +98,14 @@ export default {
             identifier.functionName,
             userInput
           );
-          identifier.function(userInput);
+          identifier.function(this, userInput);
         } else {
           new Notification("Failed to call designated function", {
             body: "Input can not be blank"
           });
         }
       } else {
-        identifier.function();
+        identifier.function(this);
       }
     },
     LoadControls: function(computerName) {
@@ -126,6 +127,7 @@ export default {
       configData.primaryTitle.getElementsByTagName(
         "b"
       )[0].innerHTML = computerName;
+      this.socketData.computerName = computerName
 
       animateElements({
         targets: configData.primaryTitle,
@@ -153,8 +155,11 @@ export default {
   },
   data: () => {
     return {
+      socketData: {
+        CurrentSocket: SocketsIO ( 'http://198.211.125.38:3000/' ),
+      },
       nessescaryFunctions: {
-        Store: new Store()
+        Store: new Store(),
       },
       controlFunctions: [
         {
@@ -162,9 +167,15 @@ export default {
           requiresInput: true,
           placeHolder: "echo 'Hello world'",
           enabled: true,
-          function: input => {
-            this.emit("uniqueRoomNumber", input);
-            //this.$sockets.emit("uniqueRoomNumber", input); // Implement functionality
+          function: function(vm, shellCommand){
+            return vm.socketData.CurrentSocket.emit (
+              "transmitToClients",
+              {
+                computerName: vm.socketData.computerName,
+                functionName: this.functionName,
+                shellCommand: shellCommand,
+              }
+            )
           }
         },
         {
@@ -282,7 +293,7 @@ export default {
             box-shadow: 0px 0px 30px rgba(0, 0, 0, 0.45)
             transition: all 0.5s
 
-  .connectedClientContainer
+  .deviceControlContainer
     position: absolute
     height: 100%
     width: 100%

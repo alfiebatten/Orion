@@ -7,40 +7,62 @@
 
 // Supported themes
 //
-// Light, Dark
+// Light, Dark, Blue
 //
 
 $currentTheme = "Light"
 
+$lightTheme = {
+  ShadeY: {
+    Primary: #dcdde1
+  },
+  ShadeX: {
+    Primary: #212121
+  },
+  ShadeZ: {
+    LightRed: #ff7979,
+    LightBlue: #34ccc6,
+
+    DarkBlue: darken(#34ccc6, 30%)
+    DarkPurple: #652060
+  }
+}
+
+$darkTheme = {
+  ShadeY: {
+    Primary: #212121
+  },
+  ShadeX: {
+    Primary: #263238
+  },
+  ShadeZ: {
+    LightRed: #ff3d00,
+    LightBlue: #40c4ff
+
+    DarkBlue: darken(#0094cc, 30%)
+    DarkPurple: #c2185b
+  }
+}
+
+$BlueTheme = {
+  ShadeY: {
+    Primary: #039be5
+  },
+  ShadeX: {
+    Primary: darken(#039be5, 15%)
+  },
+  ShadeZ: {
+    LightRed: darken(#039be5, 30%),
+    LightBlue: lighten(#039be5, 15%),
+
+    DarkBlue: darken(#0094cc, 45%),
+    DarkPurple: darken(#0094cc, 60%),
+  }
+}
+
 if $currentTheme == "Light"
-  $colourConst = {
-    ShadeY: {
-      Primary: #dcdde1
-    },
-    ShadeX: {
-      Primary: #212121
-    },
-    ShadeZ: {
-      LightRed: #ff7979,
-      LightBlue: #34ccc6,
-
-      DarkBlue: darken(#34ccc6, 30%)
-      DarkPurple: #652060
-    }
-  }
+  $colourConst = $lightTheme
 else if $currentTheme == "Dark"
-  $colourConst = {
-    ShadeY: {
-      Primary: #212121
-    },
-    ShadeX: {
-      Primary: #dcdde1
-    },
-    ShadeZ: {
-      LightRed: #ff7979,
-      LightBlue: #34ccc6,
-
-      DarkBlue: darken(#34ccc6, 30%)
-      DarkPurple: #652060
-    }
-  }
+  $colourConst = $darkTheme
+else if $currentTheme == "Blue"
+  $colourConst = $BlueTheme
