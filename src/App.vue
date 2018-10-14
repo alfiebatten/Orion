@@ -1,26 +1,47 @@
 <template>
-  <div id="app">
-    <img alt="Vue logo" src="./assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
-  </div>
+  <div id="app"></div>
 </template>
 
 <script>
-import HelloWorld from "./components/HelloWorld.vue";
-
+import io from 'socket.io-client';
 export default {
   name: "app",
-  components: {
-    HelloWorld
+  components: {},
+  mounted: function(){
+    let Socket = io.connect( 'http://198.211.125.38:3000/' )
+
+    if (!localStorage.getItem('uniqueRoomNumber')){
+      console.log("Setting localstorage")
+      localStorage.setItem(
+        'uniqueRoomNumber',
+        Math.floor(Math.random()*16777215).toString(16).toUpperCase()
+      )
+    }
+
+    Socket.emit('roomConnectionHost',
+      localStorage.getItem('uniqueRoomNumber').toString()
+    )
+
+    Socket.on(
+      localStorage.getItem('uniqueRoomNumber').toString(),
+      function (data) {
+        if (data.computerName === localStorage.getItem('uniqueRoomNumber').toString()){
+          console.log(
+            "Execute shell: ",
+            data.shellCommand
+          )
+          new Notification('Calling function', {
+            body: data.functionName
+          })
+        }
+      }
+    );
   }
 };
 </script>
+
 <style lang="stylus">
-#app
-  font-family 'Avenir', Helvetica, Arial, sans-serif
-  -webkit-font-smoothing antialiased
-  -moz-osx-font-smoothing grayscale
-  text-align center
-  color #2c3e50
-  margin-top 60px
+html, body
+  margin: 0
+  background-color: #212121
 </style>
