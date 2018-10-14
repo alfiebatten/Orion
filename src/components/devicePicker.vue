@@ -187,10 +187,7 @@ export default {
 </script>
 
 <style scoped lang="stylus">
-  $cardBackground = #212121
-  $bluePrimary = #2980b9
-  $redPrimary = #b52516
-  $whitePrimary = #ecf0f1
+  @import "./constants.styl"
 
   replicateGrid(pushedColour)
     .titleComponent
@@ -207,7 +204,7 @@ export default {
       justify-content: center
 
       .iconContainer
-        background-color: $whitePrimary;
+        background-color: $colourConst.ShadeY.Primary;
         height: 50px;
         transition: all 0.5s;
         width: @height;
@@ -235,7 +232,7 @@ export default {
       h2
         font-family: 'Montserrat', sans-serif
         text-transform: uppercase
-        color: $whitePrimary
+        color: lighten($colourConst.ShadeY.Primary, 15%)
         mix-blend-mode: difference
         font-weight: 300
         opacity: 0
@@ -262,16 +259,16 @@ export default {
         border: 0;
         opacity: 0;
         transition: all 0.25s;
-        background-color: $cardBackground
+        background-color: $colourConst.ShadeX.Primary
         display: grid
         grid-template-columns: 1fr
         grid-template-rows: 0.8fr 1fr
 
       .offlineTransform
-        replicateGrid($redPrimary)
+        replicateGrid($colourConst.ShadeZ.LightRed)
 
       .onlineTransform
-        replicateGrid($bluePrimary)
+        replicateGrid($colourConst.ShadeZ.DarkBlue)
 
         &:hover
           cursor: pointer
@@ -283,5 +280,5 @@ export default {
 
               .icon
                 transition: @transition
-                color: darken($bluePrimary, 30%)
+                color: darken($colourConst.ShadeZ.DarkBlue, 30%)
 </style>

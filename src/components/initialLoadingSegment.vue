@@ -124,6 +124,8 @@ export default {
 </script>
 
 <style scoped lang="stylus">
+@import "./constants.styl"
+
 .initialLoadingSegment
   position: absolute
   text-align: center
@@ -133,7 +135,7 @@ export default {
   margin-top: 10%
 
   h1
-    color: #212121
+    color: $colourConst.ShadeX.Primary
     z-index: 10
     font-weight: 500
     font-size: 6vw
@@ -141,7 +143,7 @@ export default {
     font-family: 'Montserrat', sans-serif
 
     b {
-    	background-image: linear-gradient(to right, #652060, #34ccc6)
+    	background-image: linear-gradient(to right, $colourConst.ShadeZ.DarkPurple, $colourConst.ShadeZ.LightBlue)
       background-size: 200% auto
     	-webkit-background-clip: text
     	-webkit-text-fill-color: transparent
@@ -149,7 +151,7 @@ export default {
 
   h3
     margin-top: -10px
-    color: #212121
+    color: $colourConst.ShadeX.Primary
     z-index: 10
     font-weight: 500
     font-family: 'Montserrat', sans-serif
@@ -163,8 +165,8 @@ export default {
     border-style: none
     border-radius: 10px
     font-family: 'Montserrat', sans-serif
-    color: white
-    background: linear-gradient(to right, #652060, #34ccc6)
+    color: $colourConst.ShadeY.Primary
+    background: linear-gradient(to right, $colourConst.ShadeZ.DarkPurple, $colourConst.ShadeZ.LightBlue)
     transition: transform 0.25s, box-shadow 0.25s
     text-transform: uppercase
     outline: 0

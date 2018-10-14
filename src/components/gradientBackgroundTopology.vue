@@ -82,7 +82,6 @@ export default {
 <style scoped lang="stylus">
   .svgContainer
     height: 100%
-    background-color: #dcdde1
     display: flex
     align-items: center
 

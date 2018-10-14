@@ -38,6 +38,8 @@ export default {
 </script>
 
 <style lang="stylus">
+  @import "components/constants.styl"
+
   body, html
     margin: 0
     overflow: hidden
@@ -48,6 +50,6 @@ export default {
     grid-template-columns: repeat(auto-fit, minmax(600px, 1fr))
     grid-template-rows: auto
     grid-gap: 6px
-    background-color: #dcdde1;
+    background-color: $colourConst.ShadeY.Primary;
     overflow: none
 </style>
