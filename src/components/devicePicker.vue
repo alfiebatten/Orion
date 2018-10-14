@@ -63,28 +63,30 @@ export default {
     }
   },
   mounted: function() {
-    this.loadDevicesIntoObj()
+    this.loadDevicesIntoObj();
     EventBus.$on("showDeviceList", () => {
       this.LoadDevices();
     });
   },
   methods: {
-    loadDevicesIntoObj: function(){
-      this.$http.get(
-        "http://198.211.125.38:3000/activeClients",
-        {
-          'Access-Control-Allow-Origin': '*'
-        }
-      ).then(result => {
-        let parsedData = JSON.parse(result.bodyText);
+    loadDevicesIntoObj: function() {
+      this.$http
+        .get("http://198.211.125.38:3000/activeClients", {
+          "Access-Control-Allow-Origin": "*"
+        })
+        .then(
+          result => {
+            let parsedData = JSON.parse(result.bodyText);
 
-        console.log("Emitting; ", parsedData)
-        EventBus.$emit("connectedClients", parsedData);
+            console.log("Emitting; ", parsedData);
+            EventBus.$emit("connectedClients", parsedData);
 
-        this.userData = parsedData;
-      }, error => {
-        console.error(error);
-      });
+            this.userData = parsedData;
+          },
+          error => {
+            console.error(error);
+          }
+        );
     },
     showControlOptions: function(cardEnabled, cardElement) {
       if (!cardEnabled) return;

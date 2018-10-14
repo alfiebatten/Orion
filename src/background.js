@@ -21,10 +21,12 @@ protocol.registerStandardSchemes(["app"], { secure: true });
 function createMainWindow() {
   const window = new BrowserWindow({
     backgroundColor: "#dcdde1",
+    title: "Orion - client",
     titleBarStyle: "hiddenInset",
     webPreferences: {
       webSecurity: false
-    }
+    },
+    icon: path.join(__dirname, 'assets/Icons/1024x1024.png')
   });
 
   if (isDevelopment) {
@@ -56,6 +58,8 @@ function createMainWindow() {
 
   return window;
 }
+
+app.setName("Orion client");
 
 // quit application when all windows are closed
 app.on("window-all-closed", () => {

@@ -49,8 +49,9 @@
 <script>
 import animateElements from "animejs";
 import { EventBus } from "../eventBus.js";
+const { remote } = require('electron');
 import Store from "electron-store";
-import SocketsIO from 'socket.io-client';
+import SocketsIO from "socket.io-client";
 
 export default {
   name: "controlFunctions",
@@ -85,6 +86,36 @@ export default {
     EventBus.$on("initiateController", computerName => {
       this.LoadControls(computerName);
     });
+    let vm = this;
+    this._data.socketData.CurrentSocket.on("codeExecutionResponse", function(data){
+      if (data.uniqueRoomNumber === vm._data.socketData.computerName){
+        if (data.error){
+          new Notification("Error: Failed to run shell command", {
+            body: "See log for logs",
+            icon: "https://suraj.codes/ASSETS/CLIENT/IMAGES/ORION/1024x1024.png"
+          });
+          console.error("ERROR:\n", data.error)
+        } else {
+          new Notification("Success: Ran shell command", {
+            body: "See log for logs",
+            icon: "https://suraj.codes/ASSETS/CLIENT/IMAGES/ORION/1024x1024.png"
+          });
+          console.log(
+            "STDOUT:\n", data.stdout,
+            "\nSTDERR:\n", data.stderr
+          )
+
+          let win = new remote.BrowserWindow({
+            parent: remote.getCurrentWindow(),
+            titleBarStyle: "hiddenInset",
+            modal: true
+          })
+
+          win.loadURL("https://google.com");
+        }
+      }
+    })
+
   },
   methods: {
     prepareExecution: function(identifier, eventElement, requiresInput) {
@@ -127,7 +158,7 @@ export default {
       configData.primaryTitle.getElementsByTagName(
         "b"
       )[0].innerHTML = computerName;
-      this.socketData.computerName = computerName
+      this.socketData.computerName = computerName;
 
       animateElements({
         targets: configData.primaryTitle,
@@ -156,10 +187,10 @@ export default {
   data: () => {
     return {
       socketData: {
-        CurrentSocket: SocketsIO ( 'http://198.211.125.38:3000/' ),
+        CurrentSocket: SocketsIO("http://198.211.125.38:3000/")
       },
       nessescaryFunctions: {
-        Store: new Store(),
+        Store: new Store()
       },
       controlFunctions: [
         {
@@ -167,15 +198,12 @@ export default {
           requiresInput: true,
           placeHolder: "echo 'Hello world'",
           enabled: true,
-          function: function(vm, shellCommand){
-            return vm.socketData.CurrentSocket.emit (
-              "transmitToClients",
-              {
-                computerName: vm.socketData.computerName,
-                functionName: this.functionName,
-                shellCommand: shellCommand,
-              }
-            )
+          function: function(vm, shellCommand) {
+            return vm.socketData.CurrentSocket.emit("transmitToClients", {
+              computerName: vm.socketData.computerName,
+              functionName: this.functionName,
+              shellCommand: shellCommand
+            });
           }
         },
         {

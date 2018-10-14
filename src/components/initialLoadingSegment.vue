@@ -50,7 +50,7 @@ export default {
   data: () => {
     return {
       Subtitle: "Waiting for connectedClients event..."
-    }
+    };
   },
   methods: {
     loadDevicePicker: function() {
@@ -88,7 +88,7 @@ export default {
           })
       });
     },
-    allocateButton: function(deviceLength){
+    allocateButton: function(deviceLength) {
       let divElement = this.$el;
       let configData = {
         primaryTitle: divElement.getElementsByTagName("h1"),
@@ -97,15 +97,19 @@ export default {
         props: this._props
       };
 
-      this._data.Subtitle = "Connected to " + deviceLength.toString() + " client" + (deviceLength > 1 || deviceLength === 0 ? 's' : '')
+      this._data.Subtitle =
+        "Connected to " +
+        deviceLength.toString() +
+        " client" +
+        (deviceLength > 1 || deviceLength === 0 ? "s" : "");
 
-      if (deviceLength > 0) animateElements({
-        targets: configData.initiaterButton,
-        opacity: configData.props.renderedOpacity,
-        duration: configData.props.secondaryDurations,
-        easing: "easeOutCubic",
-      });
-
+      if (deviceLength > 0)
+        animateElements({
+          targets: configData.initiaterButton,
+          opacity: configData.props.renderedOpacity,
+          duration: configData.props.secondaryDurations,
+          easing: "easeOutCubic"
+        });
     },
     loadInitialElements: function() {
       let vm = this;
@@ -142,18 +146,18 @@ export default {
               complete: () => resolvedPromise()
             })
         });
-      })
+      });
     }
   },
   mounted: async function() {
     this.loadInitialElements();
 
     await EventBus.$on("connectedClients", parsedData => {
-      setTimeout( () =>  this.allocateButton(
-        parsedData.length
-      ), this._props.mainTitleDelay * 2)
+      setTimeout(
+        () => this.allocateButton(parsedData.length),
+        this._props.mainTitleDelay * 2
+      );
     });
-
   }
 };
 </script>
