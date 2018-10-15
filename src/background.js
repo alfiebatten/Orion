@@ -17,6 +17,12 @@ app.dock.setBadge('')
 app.dock.hide()
 app.setName("Orion slave");
 
+const updater = require('electron-simple-updater');
+/* updater.init(
+  'https://raw.githubusercontent.com/o-y/Orion/master/example/updates.json'
+); */
+
+
 ////////////////////////////
 import io from 'socket.io-client'
 
