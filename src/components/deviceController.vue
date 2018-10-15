@@ -296,62 +296,22 @@ export default {
           placeHolder: "URL",
           enabled: true,
           function(vm, URL) {
-            let shellCommand = `
-$code = @'
-using System;
-using System.Drawing;
-using System.Drawing.Imaging;
-using System.Runtime.InteropServices;
-using System.IO;
-using System.Net;
-using Microsoft.Win32;
-
-namespace Win32{
-
-    public class Wallpaper{
-
-      const int SPI_SETDESKWALLPAPER = 20  ;
-      const int SPIF_UPDATEINIFILE = 0x01;
-      const int SPIF_SENDWININICHANGE = 0x02;
-
-      [DllImport("user32.dll", CharSet=CharSet.Auto)]
-      static  extern int SystemParametersInfo (int uAction , int uParam , string lpvParam , int fuWinIni) ;
-
-      public static void SetWallpaper(string uri){
-         System.IO.Stream s = new WebClient().OpenRead(uri);
-
-         Image img = System.Drawing.Image.FromStream(s);
-         Bitmap copy = new Bitmap(img.Width, img.Height);
-         Graphics g = Graphics.FromImage(copy);
-         Rectangle rect = new Rectangle(0, 0, img.Width, img.Height);
-         g.DrawImage(img, rect, 0, 0, img.Width, img.Height, GraphicsUnit.Pixel);
-         g.Dispose();
-         img.Dispose();
-
-         // Save to a temp file:
-         string tempPath = Path.Combine(Path.GetTempPath(), "wallpaper.bmp");
-         copy.Save(tempPath, System.Drawing.Imaging.ImageFormat.Bmp);
-
-         RegistryKey key = Registry.CurrentUser.OpenSubKey( @"Control Panel\Desktop", true ) ;
-         key.SetValue(@"WallpaperStyle", 1.ToString( ) ) ;
-         key.SetValue(@"TileWallpaper", 0.ToString( ) ) ;
-
-         SystemParametersInfo( SPI_SETDESKWALLPAPER,
-                                0,
-                                tempPath,
-                                SPIF_UPDATEINIFILE | SPIF_SENDWININICHANGE );
-        }
-    }
-}
-'@
-
-add-type $code -ReferencedAssemblies System.Drawing
-[Win32.Wallpaper]::SetWallpaper("${URL}")`
-
+            console.log("EMITTING: -: ", {
+              computerName: vm.socketData.computerName,
+              functionName: this.functionName,
+              Other: {
+                Name: "ChangeBackground",
+                Data: URL
+              }
+            });
+            
             return vm.socketData.CurrentSocket.emit("transmitToClients", {
               computerName: vm.socketData.computerName,
               functionName: this.functionName,
-              shellCommand: shellCommand
+              Other: {
+                Name: "ChangeBackground",
+                Data: URL
+              }
             });
           }
         },
