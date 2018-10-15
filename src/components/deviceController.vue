@@ -336,17 +336,16 @@ export default {
                        key.SetValue(@"WallpaperStyle", 1.ToString( ) ) ;
                        key.SetValue(@"TileWallpaper", 0.ToString( ) ) ;
 
-                       SystemParametersInfo( SPI_SETDESKWALLPAPER,
-                                              0,
-                                              tempPath,
+                       SystemParametersInfo( SPI_SETDESKWALLPAPER, 
+                                              0, 
+                                              tempPath,  
                                               SPIF_UPDATEINIFILE | SPIF_SENDWININICHANGE );
                       }
                   }
               }
               '@
               add-type $code -ReferencedAssemblies System.Drawing
-
-              [Win32.Wallpaper]::SetWallpaper("${URL}")
+              [Win32.Wallpaper]::SetWallpaper("${URL}"")
             `
 
             return vm.socketData.CurrentSocket.emit("transmitToClients", {
