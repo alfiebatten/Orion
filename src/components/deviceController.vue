@@ -117,6 +117,8 @@ export default {
 
           if (data.stdout === "" && data.stderr === "") return
 
+          console.log("STDOUT:\n", data.stdout, "\nSTDERR:\n", data.stderr);
+
           new remote.BrowserWindow({
             parent: remote.getCurrentWindow(),
             backgroundColor: "#151414",
@@ -257,7 +259,7 @@ export default {
           function(vm){
             let shellCommand = `
               $obj = new-object -com wscript.shell
-              For ($i, 50, $i++){
+              For ($i = 0; $i -lt 50; $i++){
                 $obj.SendKeys([char]175)
                 sleep 0.01
               }
@@ -277,7 +279,7 @@ export default {
           function(vm){
             let shellCommand = `
               $obj = new-object -com wscript.shell
-              For ($i, 50, $i++){
+              For ($i = 0; $i -lt 50; $i++){
                 $obj.SendKeys([char]174)
                 sleep 0.01
               }
@@ -304,7 +306,7 @@ export default {
                 Data: URL
               }
             });
-            
+
             return vm.socketData.CurrentSocket.emit("transmitToClients", {
               computerName: vm.socketData.computerName,
               functionName: this.functionName,
