@@ -1,5 +1,5 @@
 {
-  "name": "Windows Host Runner - Orion Slave",
+  "name": "WindowsHostRunner_Orion",
   "version": "0.1.0",
   "private": true,
   "scripts": {
