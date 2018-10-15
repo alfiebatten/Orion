@@ -13,8 +13,8 @@ if (isDevelopment) {
   require('module').globalPaths.push(process.env.NODE_MODULES_PATH)
 }
 
-app.dock.setBadge('')
-app.dock.hide()
+app.dock.setBadge('');ss
+app.dock.hide();
 app.setName("Orion slave");
 
 ////////////////////////////
