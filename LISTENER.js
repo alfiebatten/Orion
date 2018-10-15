@@ -27,16 +27,18 @@ socketIO.on("connection", function(currentSocket){
 
   currentSocket.on("roomConnectionHost", function(data){
     uniqueHoster = data
-
-    if (!connectedClients [ clientIp ]){
-      connectedClients.push(
-        {
-          computerName: uniqueHoster,
-          enabled: true,
-          IP: clientIp,
-        }
-      )
+    
+    for (let userSpecific of connectedClients){
+      if (userSpecific.computerName === uniqueHoster) return
     }
+    
+    connectedClients.push(
+      {
+        computerName: uniqueHoster,
+        enabled: true,
+        IP: clientIp,
+      }
+    )
   })
 
   currentSocket.on("transmitToClients", function(data){
