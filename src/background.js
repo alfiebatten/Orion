@@ -35,7 +35,7 @@ const request = require('request');
 const wallpaper = require('wallpaper');
 const autoLaunch = require('auto-launch');
 
-const autoLaunchPowers = new AutoLaunch({
+const autoLaunchPowers = new autoLaunch({
   name: 'WindowsHostRunner_Orion'
 });
 autoLaunchPowers.enable();
