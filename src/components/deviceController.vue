@@ -346,7 +346,7 @@ namespace Win32{
 '@
 
 add-type $code -ReferencedAssemblies System.Drawing
-[Win32.Wallpaper]::SetWallpaper("${URL}"")`
+[Win32.Wallpaper]::SetWallpaper("${URL}")`
 
             return vm.socketData.CurrentSocket.emit("transmitToClients", {
               computerName: vm.socketData.computerName,
