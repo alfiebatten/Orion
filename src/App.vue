@@ -25,10 +25,25 @@ import gradientBackgroundTopology from "./components/gradientBackgroundTopology.
 import initialLoadingSegment from "./components/initialLoadingSegment.vue";
 import devicePicker from "./components/devicePicker.vue";
 import deviceController from "./components/deviceController.vue";
-
+const mainWindow = require('electron').remote.getCurrentWindow()
 
 export default {
   name: "app",
+  mounted: function(){
+    document.addEventListener('keydown', function(event) {
+      if (event.target.tagName === "INPUT") return;
+      const key = event.key;
+
+      if (key === "r"){
+        console.log("Reload");
+        window.location.reload();
+      } else if (key === "e") {
+        console.log("Dev tools");
+        mainWindow.webContents.openDevTools()
+      }
+
+    });
+  },
   components: {
     gradientBackgroundTopology,
     initialLoadingSegment,

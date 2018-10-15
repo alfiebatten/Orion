@@ -53,8 +53,17 @@ export default {
     };
   },
   methods: {
+    playUnitTheme: function(){
+      let AudioElement = new Audio("https://suraj.codes/ASSETS/CLIENT/AUDIO/UnitTheme.mp3");
+      AudioElement.play()
+      AudioElement.addEventListener('ended', function() {
+        this.currentTime = 0;
+        this.play();
+      }, false);
+    },
     loadDevicePicker: function() {
       let divElement = this.$el;
+      this.playUnitTheme();
 
       let configData = {
         primaryTitle: divElement.getElementsByTagName("h1"),

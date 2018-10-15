@@ -8,10 +8,9 @@ import {
   installVueDevtools
 } from "vue-cli-plugin-electron-builder/lib";
 const isDevelopment = process.env.NODE_ENV !== "production";
-require('electron-debug')({
-  enabled: true
-});
-if (isDevelopment) {
+const overrideDev = false
+
+if (overrideDev || isDevelopment) {
   // Don't load any native (external) modules until the following line is run:
   require("module").globalPaths.push(process.env.NODE_MODULES_PATH);
 }
@@ -29,7 +28,7 @@ function createMainWindow() {
     titleBarStyle: "hiddenInset",
     webPreferences: {
       webSecurity: false,
-      zoomFactor: 0.8
+      zoomFactor: 0.65
     },
     icon: path.join(__dirname, 'assets/Icons/1024x1024.png')
   });
@@ -38,6 +37,7 @@ function createMainWindow() {
     // Load the url of the dev server if in development mode
     window.loadURL(process.env.WEBPACK_DEV_SERVER_URL);
     if (!process.env.IS_TEST) window.webContents.openDevTools();
+
   } else {
     createProtocol("app");
     //   Load the index.html when not in development
@@ -83,7 +83,7 @@ app.on("activate", () => {
 
 // create main BrowserWindow when electron is ready
 app.on("ready", async () => {
-  if (isDevelopment && !process.env.IS_TEST) {
+  if (overrideDev || (isDevelopment && !process.env.IS_TEST)) {
     // Install Vue Devtools
     await installVueDevtools();
   }
