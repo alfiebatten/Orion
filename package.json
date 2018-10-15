@@ -13,6 +13,7 @@
   },
   "dependencies": {
     "animejs": "^2.2.0",
+    "electron-debug": "^2.0.0",
     "electron-store": "^2.0.0",
     "mousetrap": "^1.6.2",
     "register-service-worker": "^1.0.0",

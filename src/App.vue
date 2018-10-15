@@ -26,6 +26,7 @@ import initialLoadingSegment from "./components/initialLoadingSegment.vue";
 import devicePicker from "./components/devicePicker.vue";
 import deviceController from "./components/deviceController.vue";
 
+
 export default {
   name: "app",
   components: {
@@ -51,5 +52,6 @@ export default {
     grid-template-rows: auto
     grid-gap: 6px
     background-color: $colourConst.ShadeY.Primary;
-    overflow: none
+    overflow: none;
+    -webkit-app-region: drag;
 </style>

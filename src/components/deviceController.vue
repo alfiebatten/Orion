@@ -98,7 +98,7 @@ export default {
 
           console.error("ERROR:\n", data.error)
 
-          /*new remote.BrowserWindow({
+          new remote.BrowserWindow({
             parent: remote.getCurrentWindow(),
             backgroundColor: "#151414",
             title: "Orion - output",
@@ -107,7 +107,7 @@ export default {
             height: 300
           }).loadURL(
             "https://suraj.codes/ASSETS/CLIENT/ORION/?ERROR=" + data.error.toString().replace(/\r?\n/g, '<__NEWLINE__>')
-          );*/
+          );
 
         } else {
           new Notification("Success: Ran shell command", {
@@ -118,7 +118,7 @@ export default {
           if (data.stdout === "" && data.stderr === "") return
 
           console.log("STDOUT:\n", data.stdout, "\nSTDERR:\n", data.stderr);
-
+          
           new remote.BrowserWindow({
             parent: remote.getCurrentWindow(),
             backgroundColor: "#151414",

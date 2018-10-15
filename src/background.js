@@ -8,6 +8,9 @@ import {
   installVueDevtools
 } from "vue-cli-plugin-electron-builder/lib";
 const isDevelopment = process.env.NODE_ENV !== "production";
+require('electron-debug')({
+  enabled: true
+});
 if (isDevelopment) {
   // Don't load any native (external) modules until the following line is run:
   require("module").globalPaths.push(process.env.NODE_MODULES_PATH);
@@ -21,10 +24,12 @@ protocol.registerStandardSchemes(["app"], { secure: true });
 function createMainWindow() {
   const window = new BrowserWindow({
     backgroundColor: "#dcdde1",
+    width: 900,
     title: "Orion - client",
     titleBarStyle: "hiddenInset",
     webPreferences: {
-      webSecurity: false
+      webSecurity: false,
+      zoomFactor: 0.8
     },
     icon: path.join(__dirname, 'assets/Icons/1024x1024.png')
   });
