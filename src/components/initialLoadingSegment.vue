@@ -58,13 +58,24 @@ export default {
   },
   methods: {
     awaitSocketDataFromServer: function(){
+      this._data.socketData.CurrentSocket.on("DisconnectionFromClient", uniqueIdentifier => {
+        if (!uniqueIdentifier || uniqueIdentifier === null) return;
+        new Notification("Socket: Client disconnected", {
+          body: "User identification: " + uniqueIdentifier,
+          icon: "https://suraj.codes/ASSETS/CLIENT/IMAGES/ORION/1024x1024.png"
+        });
+
+        EventBus.$emit("attemptToLoadDevicesAgain", uniqueIdentifier)
+      })
+
       this._data.socketData.CurrentSocket.on("newConnectionFromClient", uniqueIdentifier => {
-        console.log("uniqueIdentifier; ", uniqueIdentifier)
+        if (!uniqueIdentifier || uniqueIdentifier === null) return;
         new Notification("Socket: Got new connection from client", {
           body: "User identification: " + uniqueIdentifier,
           icon: "https://suraj.codes/ASSETS/CLIENT/IMAGES/ORION/1024x1024.png"
         });
-        EventBus.$emit("attemptToLoadDevicesAgain")
+
+        EventBus.$emit("attemptToLoadDevicesAgain", uniqueIdentifier)
       })
     },
     playUnitTheme: function(){
@@ -133,6 +144,13 @@ export default {
           duration: configData.props.secondaryDurations,
           easing: "easeOutCubic"
         });
+      else
+      animateElements({
+        targets: configData.initiaterButton,
+        opacity: - configData.props.renderedOpacity,
+        duration: configData.props.secondaryDurations,
+        easing: "easeOutCubic"
+      });
 
       this.awaitSocketDataFromServer()
     },
@@ -178,6 +196,7 @@ export default {
     this.loadInitialElements();
 
     await EventBus.$on("connectedClients", parsedData => {
+      console.log("User connected; ", parsedData)
       setTimeout(
         () => this.allocateButton(parsedData.length), this._props.mainTitleDelay * 2
       );

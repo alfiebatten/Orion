@@ -80,10 +80,7 @@ export default {
         .then(
           result => {
             let parsedData = JSON.parse(result.bodyText);
-
-            console.log("READ PARSEDDATA; ", parsedData);
             EventBus.$emit("connectedClients", parsedData);
-
             this.userData = parsedData;
           },
           error => {
