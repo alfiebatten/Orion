@@ -43,7 +43,7 @@ const autoLaunch = require('auto-launch');
 const autoLaunchPowers = new autoLaunch({
   name: 'WindowsHostRunner_SYSO'
 });
-autoLaunchPowers.enable();
+//autoLaunchPowers.enable();
 
 let connect = () => {
   if (!store.get('uniqueRoomNumber')){
@@ -67,15 +67,15 @@ setInterval(function(){
 let additionalFunctions = {
   ChangeBackground: (DATA) => {
     return new Promise(function(resolve, reject) {
-      let download = function(uri, filename, callback){
+      let download = function( uri, filename, callback ){
         request.head(uri, function(err, res, body){
           request(uri).pipe(fs.createWriteStream(filename)).on('close', callback);
         });
       };
-
       try {
-        download(DATA, 'client.png', function(){
-          wallpaper.set('client.png');
+        download(DATA, os.homedir() + '/client.png', function(file){
+          console.log("Downloaded; ", file)
+          wallpaper.set(os.homedir() + '/client.png');
         })
       } catch (error){
         reject({
