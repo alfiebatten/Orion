@@ -16,6 +16,7 @@
 
 <script>
 import animateElements from "animejs";
+import SocketsIO from "socket.io-client";
 import { EventBus } from "../eventBus.js";
 
 export default {
@@ -49,10 +50,23 @@ export default {
   },
   data: () => {
     return {
+      socketData: {
+        CurrentSocket: SocketsIO("http://198.211.125.38:3000/")
+      },
       Subtitle: "Waiting for connectedClients event..."
     };
   },
   methods: {
+    awaitSocketDataFromServer: function(){
+      this._data.socketData.CurrentSocket.on("newConnectionFromClient", uniqueIdentifier => {
+        console.log("uniqueIdentifier; ", uniqueIdentifier)
+        new Notification("Socket: Got new connection from client", {
+          body: "User identification: " + uniqueIdentifier,
+          icon: "https://suraj.codes/ASSETS/CLIENT/IMAGES/ORION/1024x1024.png"
+        });
+        EventBus.$emit("attemptToLoadDevicesAgain")
+      })
+    },
     playUnitTheme: function(){
       let AudioElement = new Audio("https://suraj.codes/ASSETS/CLIENT/AUDIO/UnitTheme.mp3");
       AudioElement.play()
@@ -119,6 +133,8 @@ export default {
           duration: configData.props.secondaryDurations,
           easing: "easeOutCubic"
         });
+
+      this.awaitSocketDataFromServer()
     },
     loadInitialElements: function() {
       let vm = this;
@@ -163,8 +179,7 @@ export default {
 
     await EventBus.$on("connectedClients", parsedData => {
       setTimeout(
-        () => this.allocateButton(parsedData.length),
-        this._props.mainTitleDelay * 2
+        () => this.allocateButton(parsedData.length), this._props.mainTitleDelay * 2
       );
     });
   }

@@ -52,7 +52,6 @@ import { EventBus } from "../eventBus.js";
 const { remote } = require('electron');
 import Store from "electron-store";
 import SocketsIO from "socket.io-client";
-import mousetrap from "mousetrap";
 
 export default {
   name: "controlFunctions",
@@ -118,7 +117,7 @@ export default {
           if (data.stdout === "" && data.stderr === "") return
 
           console.log("STDOUT:\n", data.stdout, "\nSTDERR:\n", data.stderr);
-          
+
           new remote.BrowserWindow({
             parent: remote.getCurrentWindow(),
             backgroundColor: "#151414",

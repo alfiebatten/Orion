@@ -25,6 +25,7 @@ import gradientBackgroundTopology from "./components/gradientBackgroundTopology.
 import initialLoadingSegment from "./components/initialLoadingSegment.vue";
 import devicePicker from "./components/devicePicker.vue";
 import deviceController from "./components/deviceController.vue";
+import mousetrap from "mousetrap";
 const mainWindow = require("electron").remote.getCurrentWindow();
 
 export default {

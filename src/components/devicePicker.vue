@@ -67,6 +67,9 @@ export default {
     EventBus.$on("showDeviceList", () => {
       this.LoadDevices();
     });
+    EventBus.$on("attemptToLoadDevicesAgain", () => {
+      this.loadDevicesIntoObj();
+    });
   },
   methods: {
     loadDevicesIntoObj: function() {
@@ -78,7 +81,7 @@ export default {
           result => {
             let parsedData = JSON.parse(result.bodyText);
 
-            console.log("Emitting; ", parsedData);
+            console.log("READ PARSEDDATA; ", parsedData);
             EventBus.$emit("connectedClients", parsedData);
 
             this.userData = parsedData;
