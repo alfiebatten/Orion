@@ -17,21 +17,21 @@ socketIO.on("connection", function(currentSocket){
 
   currentSocket.on('disconnect', function() {
     for (let user in connectedClients){
-      console.log("Checking against; ", uniqueHoster)
       if (connectedClients[user].computerName === uniqueHoster){
         connectedClients.splice(connectedClients.indexOf(connectedClients[user]), 1)
       }
     }
-    console.log("Disconnect: ", connectedClients)
+    socketIO.emit("DisconnectionFromClient", uniqueHoster);
   });
 
   currentSocket.on("roomConnectionHost", function(data){
     uniqueHoster = data
-    
+
     for (let userSpecific of connectedClients){
       if (userSpecific.computerName === uniqueHoster) return
     }
-    
+
+    socketIO.emit("newConnectionFromClient", uniqueHoster);
     connectedClients.push(
       {
         computerName: uniqueHoster,
@@ -50,9 +50,13 @@ socketIO.on("connection", function(currentSocket){
   })
 })
 
-
 App.get('/', function(req, res){
-  res.send("Server online")
+  res.setHeader('Content-Type', 'application/json');
+  res.send(
+    JSON.stringify({
+      Response: "[WINDOWS]: Server online"
+    })
+  );
 })
 
 App.get('/activeClients', function(req, res){
