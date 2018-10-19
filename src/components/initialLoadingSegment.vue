@@ -193,6 +193,7 @@ export default {
     }
   },
   mounted: async function() {
+    console.log("Loading initial segment");
     this.loadInitialElements();
 
     await EventBus.$on("connectedClients", parsedData => {
