@@ -1,6 +1,6 @@
-## Orion
-
-Documentation and screenshots will follow
+<p align="center">
+  <img src="https://raw.githubusercontent.com/o-y/Orion/master/git_assets/Title/Asset%201-8-Dark.png" alt="REXT.LOGO"/>
+</p>
 
 #### Setup
 vue ui
