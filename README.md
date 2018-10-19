@@ -20,7 +20,7 @@
 </p>
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/o-y/Orion/master/git_assets/Title/Screenshot.png" alt="Orion Logo"/>
+  <img src="https://raw.githubusercontent.com/o-y/Orion/master/git_assets/Title/Screenshot.png" alt="Orion Logo" height="150px"/>
 </p>
 
 <p align="center">
