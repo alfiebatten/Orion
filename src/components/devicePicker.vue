@@ -32,6 +32,7 @@
 <script>
 import animateElements from "animejs";
 import { EventBus } from "../eventBus.js";
+import SocketsIO from "socket.io-client";
 
 export default {
   name: "devicePicker",
@@ -77,16 +78,16 @@ export default {
         if (!uniqueIdentifier || uniqueIdentifier === null) return;
         console.log("Disconnection: ", uniqueIdentifier);
         console.log("this.userData: ", this.userData);
-      }),
+      })
     },
     loadDevicesIntoObj: function() {
       this.realTimeAllocation();
-      
+
       this.$http
         .get("http://198.211.125.38:3000/activeClients", {
           "Access-Control-Allow-Origin": "*"
         })
-        .then(
+        .then (
           result => {
             let parsedData = JSON.parse(result.bodyText);
             EventBus.$emit("connectedClients", parsedData);
@@ -188,6 +189,9 @@ export default {
       classes: {
         online: 'onlineTransform',
         offline: 'offlineTransform'
+      },
+      socketData: {
+        CurrentSocket: SocketsIO("http://198.211.125.38:3000/")
       },
       pseudoUserData: [
         {
