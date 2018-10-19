@@ -73,16 +73,7 @@ export default {
     });
   },
   methods: {
-    realTimeAllocation: function(){
-      this._data.socketData.CurrentSocket.on("DisconnectionFromClient", uniqueIdentifier => {
-        if (!uniqueIdentifier || uniqueIdentifier === null) return;
-        console.log("Disconnection: ", uniqueIdentifier);
-        console.log("this.userData: ", this.userData);
-      })
-    },
     loadDevicesIntoObj: function() {
-      this.realTimeAllocation();
-
       this.$http
         .get("http://198.211.125.38:3000/activeClients", {
           "Access-Control-Allow-Origin": "*"

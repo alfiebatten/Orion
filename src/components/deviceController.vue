@@ -2,8 +2,8 @@
   <div class="deviceControlContainer">
     <div class = "connectedListTitle">
       <h2>
-        Connected to:
-        <b></b>
+        {{ deviceData.isConnected === true ? "Connected to: " : "Disconnected from: " }}
+        <b>{{ deviceData.name }}</b>
       </h2>
     </div>
 
@@ -83,10 +83,18 @@ export default {
     }
   },
   mounted: function() {
+    this.realTimeAllocation();
+
     EventBus.$on("initiateController", computerName => {
       this.LoadControls(computerName);
     });
+
+    EventBus.$on("connectedClients", parsedData => {
+      this.userData = parsedData;
+    });
+
     let vm = this;
+
     this._data.socketData.CurrentSocket.on("codeExecutionResponse", function(
       data
     ) {
@@ -147,6 +155,18 @@ export default {
     });
   },
   methods: {
+    realTimeAllocation: function(){
+      this._data.socketData.CurrentSocket.on("DisconnectionFromClient", uniqueIdentifier => {
+        if (!uniqueIdentifier || uniqueIdentifier === null) return;
+
+        for (let userInformation of this.userData){
+          if (userInformation.computerName === this.socketData.computerName ){
+            this.controlFunctions.map(data => data.enabled = false)
+            this.deviceData.isConnected = false;
+          }
+        }
+      })
+    },
     prepareExecution: function(identifier, eventElement, requiresInput) {
       if (!identifier.enabled) return;
       if (requiresInput) {
@@ -184,9 +204,9 @@ export default {
       };
 
       divElement.style.zIndex = "5";
-      configData.primaryTitle.getElementsByTagName(
-        "b"
-      )[0].innerHTML = computerName;
+
+      this.deviceData.isConnected = true;
+      this.deviceData.name = computerName;
       this.socketData.computerName = computerName;
 
       animateElements({
@@ -217,6 +237,10 @@ export default {
     return {
       socketData: {
         CurrentSocket: SocketsIO("http://198.211.125.38:3000/")
+      },
+      deviceData: {
+        isConnected: false,
+        name: "<< AWAITING CONNECTION >>"
       },
       nessescaryFunctions: {
         Store: new Store()
