@@ -20,12 +20,28 @@
 </p>
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/o-y/Orion/master/git_assets/Title/Screenshot.png" alt="Orion Logo" height="150px"/>
+  <img src="https://raw.githubusercontent.com/o-y/Orion/master/git_assets/Title/Screenshot.png" alt="Screenshot" height="150px"/>
 </p>
+
+#### Home screen component
+
+<p align="center">
+  <img src="https://raw.githubusercontent.com/o-y/Orion/master/git_assets/Window/HomeWindow.png" alt="Screenshot of connected clients window"/>
+</p>
+
+
+#### Connected clients component
 
 <p align="center">
   <img src="https://raw.githubusercontent.com/o-y/Orion/master/git_assets/Window/ConnectedWindow.png" alt="Screenshot of connected clients window"/>
 </p>
+
+#### Control screen component
+
+<p align="center">
+  <img src="https://raw.githubusercontent.com/o-y/Orion/master/git_assets/Window/ControlWindow.png" alt="Screenshot of connected clients window"/>
+</p>
+
 
 #### Setup
 vue ui
