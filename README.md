@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://raw.githubusercontent.com/o-y/Orion/master/git_assets/Title/Asset%201-8-Dark.png" alt="REXT.LOGO"/>
+  <img src="https://raw.githubusercontent.com/o-y/Orion/master/git_assets/Title/Asset%201-8-Dark.png" alt="Orion Logo"/>
 </p>
 
 <div align="center">
@@ -16,8 +16,11 @@
 
 <p align="center">
   In Greek mythology, Orion, son of Poseidon was a giant huntsman whom Zeus placed among the stars as the constellation of Orion. This project has been named Orion to symbolize the connectivity and impending, sentinel like watch the app imposes on the client.
-
   Orion consists of three parts, the Client, the Host and the Server. The client runs on the targets computer, silent and unobtrusive - designed to stay hidden with minimal resource impact. The host runs as an app on the hosts computer, a sleek interface filled with time saving features, allows for an intuitive framework, giving the host access over the given client. The server acts as a middleware for both the client and the host - using the JavaScript library Sockets.io means the host can view in real time what clients are connected. Using notifications the host is alerted when a client connects and disconnects.
+</p>
+
+<p align="center">
+  <img src="https://raw.githubusercontent.com/o-y/Orion/master/git_assets/Window/ConnectedWindow.png" alt="Screenshot of connected clients window"/>
 </p>
 
 #### Setup
