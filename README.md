@@ -42,24 +42,43 @@
   <img src="https://raw.githubusercontent.com/o-y/Orion/master/git_assets/Window/ControlWindow.png" alt="Screenshot of connected clients window"/>
 </p>
 
+<p align="center">
+  <img src="https://raw.githubusercontent.com/o-y/Orion/master/git_assets/Title/Installation.png" alt="Installation" height="150px"/>
+</p>
 
-#### Setup
-vue ui
+#### Installation
+```
+  Installs the required dependencies
+  yarn install / npm install
+```
+
+#### Initiate Vue UI
+```
+  Starts up the Vue UI on a local server. The cli-ui exposes an API that allows augmenting the project configurations and tasks, as well as sharing data and communicating with other processes.
+
+  vue ui
+```
 
 #### Serve
-vue-cli-service serve
+```
+  Locally serves the app on a development server initiating an Electron app compiled with Vue dev tools using the package electron-builder
+  yarn serve:electron / npm run serve:electron
+```
 
 #### Build
-vue-cli-service build
+```
+  Packages the app, downloads the required Electron assets and then compiles into the given file type for the OS. Defaults to your current OS
+  yarn run serve:build
+```
 
 #### Lint
-vue-cli-service lint
-
-#### Build:electron
-vue-cli-service build:electron
-
-#### Serve:electron
-vue-cli-service serve:electron
+```
+  Lints JavaScript/Vue files, returning any relevant errors or warnings
+  yarn run lint
+```
 
 #### Postinstall
-electron-builder install-app-deps
+```
+  Installs required app dependencies
+  electron-builder install-app-deps
+```
