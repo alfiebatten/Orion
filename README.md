@@ -42,6 +42,12 @@
   <img src="https://raw.githubusercontent.com/o-y/Orion/master/git_assets/Window/ControlWindow.png" alt="Screenshot of connected clients window"/>
 </p>
 
+#### Control screen component with response from client
+
+<p align="center">
+  <img src="https://raw.githubusercontent.com/o-y/Orion/master/git_assets/Window/Response.png" alt="Screenshot of connected clients window with response"/>
+</p>
+
 <p align="center">
   <img src="https://raw.githubusercontent.com/o-y/Orion/master/git_assets/Title/Installation.png" alt="Installation" height="150px"/>
 </p>

@@ -49,7 +49,7 @@
 <script>
 import animateElements from "animejs";
 import { EventBus } from "../eventBus.js";
-const { remote } = require('electron');
+const { remote } = require("electron");
 import Store from "electron-store";
 import SocketsIO from "socket.io-client";
 
@@ -87,15 +87,17 @@ export default {
       this.LoadControls(computerName);
     });
     let vm = this;
-    this._data.socketData.CurrentSocket.on("codeExecutionResponse", function(data){
-      if (data.uniqueRoomNumber === vm._data.socketData.computerName){
-        if (data.error){
+    this._data.socketData.CurrentSocket.on("codeExecutionResponse", function(
+      data
+    ) {
+      if (data.uniqueRoomNumber === vm._data.socketData.computerName) {
+        if (data.error) {
           new Notification("Error: Failed to run shell command", {
             body: "See browserwindow for logs",
             icon: "https://suraj.codes/ASSETS/CLIENT/IMAGES/ORION/1024x1024.png"
           });
 
-          console.error("ERROR:\n", data.error)
+          console.error("ERROR:\n", data.error);
 
           new remote.BrowserWindow({
             parent: remote.getCurrentWindow(),
@@ -105,18 +107,27 @@ export default {
             width: 400,
             height: 300
           }).loadURL(
-            "https://suraj.codes/ASSETS/CLIENT/ORION/?ERROR=" + data.error.toString().replace(/\r?\n/g, '<__NEWLINE__>')
+            "https://suraj.codes/ASSETS/CLIENT/ORION/?ERROR=" +
+              data.error.toString().replace(/\r?\n/g, "<__NEWLINE__>")
           );
-
         } else {
           new Notification("Success: Ran shell command", {
             body: "See browserwindow for logs",
             icon: "https://suraj.codes/ASSETS/CLIENT/IMAGES/ORION/1024x1024.png"
           });
 
-          if (data.stdout === "" && data.stderr === "") return
+          if (data.stdout === "" && data.stderr === "") return;
 
-          console.log("STDOUT:\n", data.stdout, "\nSTDERR:\n", data.stderr);
+          console.log(
+            "STDOUT:\n",
+            data.stdout,
+            "\nSTDERR:\n",
+            data.stderr,
+            "https://suraj.codes/ASSETS/CLIENT/ORION/?STDOUT=" +
+              data.stdout.replace(/\r?\n/g, "<__NEWLINE__>") +
+              "&STDERR=" +
+              data.stderr.replace(/\r?\n/g, "<__NEWLINE__>")
+          );
 
           new remote.BrowserWindow({
             parent: remote.getCurrentWindow(),
@@ -126,13 +137,14 @@ export default {
             width: 400,
             height: 300
           }).loadURL(
-            "https://suraj.codes/ASSETS/CLIENT/ORION/?STDOUT=" + data.stdout.replace(/\r?\n/g, '<__NEWLINE__>') + "&STDERR=" + data.stderr.replace(/\r?\n/g, '<__NEWLINE__>')
+            "https://suraj.codes/ASSETS/CLIENT/ORION/?STDOUT=" +
+              data.stdout.replace(/\r?\n/g, "<__NEWLINE__>") +
+              "&STDERR=" +
+              data.stderr.replace(/\r?\n/g, "<__NEWLINE__>")
           );
-
         }
       }
-    })
-
+    });
   },
   methods: {
     prepareExecution: function(identifier, eventElement, requiresInput) {
@@ -227,8 +239,8 @@ export default {
           functionName: "Shutdown",
           requiresInput: false,
           enabled: true,
-          function(vm){
-            let shellCommand = `Stop-Computer`
+          function(vm) {
+            let shellCommand = `Stop-Computer`;
 
             return vm.socketData.CurrentSocket.emit("transmitToClients", {
               computerName: vm.socketData.computerName,
@@ -241,8 +253,8 @@ export default {
           functionName: "Restart",
           requiresInput: false,
           enabled: true,
-          function(vm){
-            let shellCommand = `Restart-Computer`
+          function(vm) {
+            let shellCommand = `Restart-Computer`;
 
             return vm.socketData.CurrentSocket.emit("transmitToClients", {
               computerName: vm.socketData.computerName,
@@ -255,14 +267,14 @@ export default {
           functionName: "Max volume",
           requiresInput: false,
           enabled: true,
-          function(vm){
+          function(vm) {
             let shellCommand = `
               $obj = new-object -com wscript.shell
               For ($i = 0; $i -lt 50; $i++){
                 $obj.SendKeys([char]175)
                 sleep 0.01
               }
-            `
+            `;
 
             return vm.socketData.CurrentSocket.emit("transmitToClients", {
               computerName: vm.socketData.computerName,
@@ -275,14 +287,14 @@ export default {
           functionName: "Mute volume",
           requiresInput: false,
           enabled: true,
-          function(vm){
+          function(vm) {
             let shellCommand = `
               $obj = new-object -com wscript.shell
               For ($i = 0; $i -lt 50; $i++){
                 $obj.SendKeys([char]174)
                 sleep 0.01
               }
-            `
+            `;
 
             return vm.socketData.CurrentSocket.emit("transmitToClients", {
               computerName: vm.socketData.computerName,
@@ -321,8 +333,8 @@ export default {
           requiresInput: true,
           placeHolder: "URL",
           enabled: true,
-          function(vm, URL){
-            let shellCommand = `start ${URL}`
+          function(vm, URL) {
+            let shellCommand = `start ${URL}`;
 
             return vm.socketData.CurrentSocket.emit("transmitToClients", {
               computerName: vm.socketData.computerName,
