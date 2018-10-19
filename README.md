@@ -4,7 +4,7 @@
 
 [![Maintainability](https://api.codeclimate.com/v1/badges/03b7dfafbbf28b6fe8e4/maintainability)](https://codeclimate.com/github/o-y/Orion/maintainability)
 [![Dependencies](https://david-dm.org/O-Y/Orion.svg)](https://david-dm.org/O-Y/Orion.svg)
-
+[![GitHub version](https://badge.fury.io/gh/o-y%2Forion.svg)](https://badge.fury.io/gh/o-y%2Forion)
 
 
 #### Setup
