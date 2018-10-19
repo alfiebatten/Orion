@@ -48,37 +48,36 @@
 
 #### Installation
 ```
-  Installs the required dependencies
-  yarn install / npm install
+Installs the required dependencies
+yarn install / npm install
 ```
 
 #### Initiate Vue UI
 ```
-  Starts up the Vue UI on a local server. The cli-ui exposes an API that allows augmenting the project configurations and tasks, as well as sharing data and communicating with other processes.
-
-  vue ui
+Starts up the Vue UI on a local server. The cli-ui exposes an API that allows augmenting the project configurations and tasks, as well as sharing data and communicating with other processes.
+vue ui
 ```
 
 #### Serve
 ```
-  Locally serves the app on a development server initiating an Electron app compiled with Vue dev tools using the package electron-builder
-  yarn serve:electron / npm run serve:electron
+Locally serves the app on a development server initiating an Electron app compiled with Vue dev tools using the package electron-builder
+yarn serve:electron / npm run serve:electron
 ```
 
 #### Build
 ```
-  Packages the app, downloads the required Electron assets and then compiles into the given file type for the OS. Defaults to your current OS
-  yarn run serve:build
+Packages the app, downloads the required Electron assets and then compiles into the given file type for the OS. Defaults to your current OS
+yarn run serve:build
 ```
 
 #### Lint
 ```
-  Lints JavaScript/Vue files, returning any relevant errors or warnings
-  yarn run lint
+Lints JavaScript/Vue files, returning any relevant errors or warnings
+yarn run lint
 ```
 
 #### Postinstall
 ```
-  Installs required app dependencies
-  electron-builder install-app-deps
+Installs required app dependencies
+electron-builder install-app-deps
 ```
