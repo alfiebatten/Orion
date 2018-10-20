@@ -12,6 +12,9 @@
   <a href="https://badge.fury.io/gh/o-y%2Forion.svg">
     <img src="https://badge.fury.io/gh/o-y%2Forion.svg" alt="GitHub version" height="18">
   </a>
+  <a href="https://img.shields.io/badge/License-MPL%202.0-brightgreen.svg">
+    <img src="https://img.shields.io/badge/License-MPL%202.0-brightgreen.svg" alt="License icon" height="18">
+  </a>  
 </div>
 
 <p align="center">
