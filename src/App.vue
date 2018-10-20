@@ -1,7 +1,7 @@
 <template>
   <div id="app">
     <vue-progress-bar></vue-progress-bar>
-    
+
     <gradientBackgroundTopology
       :delay = "100"
       ref = "referenceGradientBackgroundTopology"
@@ -32,10 +32,13 @@ const mainWindow = require("electron").remote.getCurrentWindow();
 export default {
   name: "app",
   mounted: function() {
-    document.addEventListener("keydown", event => {
-      if (event.target.tagName === "INPUT") return;
-      if (event.key === "r") window.location.reload();
-      else if (event.key === "e") mainWindow.webContents.openDevTools();
+    Mousetrap.bind(['command+r', 'ctrl+r'], () => {
+      mainWindow.webContents.openDevTools()
+      return false;
+    });
+    Mousetrap.bind(['command+e', 'ctrl+e'], () => {
+      mainWindow.webContents.openDevTools()
+      return false;
     });
   },
   components: {
