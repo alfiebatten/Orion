@@ -99,12 +99,14 @@ export default {
       data
     ) {
       if (data.uniqueRoomNumber === vm._data.socketData.computerName) {
+        this.gotResponse = true
         if (data.error) {
           new Notification("Error: Failed to run shell command", {
             body: "See browserwindow for logs",
             icon: "https://suraj.codes/ASSETS/CLIENT/IMAGES/ORION/1024x1024.png"
           });
 
+          this.$Progress.fail()
           console.error("ERROR:\n", data.error);
 
           new remote.BrowserWindow({
@@ -124,6 +126,7 @@ export default {
             icon: "https://suraj.codes/ASSETS/CLIENT/IMAGES/ORION/1024x1024.png"
           });
 
+          this.$Progress.finish()
           if (data.stdout === "" && data.stderr === "") return;
 
           console.log(
@@ -178,6 +181,11 @@ export default {
             identifier.functionName,
             userInput
           );
+          this.gotResponse = false
+          this.$Progress.start()
+          setTimeout(function(){
+            if (this.gotResponse === false) this.$Progress.fail()
+          }.bind(this), 5000);
           identifier.function(this, userInput);
         } else {
           new Notification("Failed to call designated function", {
@@ -185,6 +193,11 @@ export default {
           });
         }
       } else {
+        this.gotResponse = false
+        this.$Progress.start()
+        setTimeout(function(){
+          if (this.gotResponse === false) this.$Progress.fail()
+        }.bind(this), 5000);
         identifier.function(this);
       }
     },

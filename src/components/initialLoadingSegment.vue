@@ -11,6 +11,9 @@
     <button v-on:click = "loadDevicePicker">
       Initiate
     </button>
+
+    <div class = "loggerComponent"></div>
+
   </div>
 </template>
 
@@ -216,6 +219,17 @@ export default {
   z-index: 2
   height: 100%
   margin-top: 10%
+
+  .loggerComponent
+    width: 100%
+    height: @width
+    //background-color: #212121
+    display: grid
+    display: grid
+    height: 100%
+    grid-template-columns: 9fr 1fr
+    grid-template-rows: 9fr 1fr
+    grid-gap: 0px 0px
 
   h1
     color: $colourConst.ShadeX.Primary

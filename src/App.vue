@@ -1,6 +1,7 @@
 <template>
   <div id="app">
-
+    <vue-progress-bar></vue-progress-bar>
+    
     <gradientBackgroundTopology
       :delay = "100"
       ref = "referenceGradientBackgroundTopology"
