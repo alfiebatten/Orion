@@ -27,17 +27,17 @@ import initialLoadingSegment from "./components/initialLoadingSegment.vue";
 import devicePicker from "./components/devicePicker.vue";
 import deviceController from "./components/deviceController.vue";
 import mousetrap from "mousetrap";
-const mainWindow = require("electron").remote.getCurrentWindow();
 
 export default {
   name: "app",
   mounted: function() {
-    Mousetrap.bind(['command+r', 'ctrl+r'], () => {
-      mainWindow.webContents.openDevTools()
+    mousetrap.bind(["command+r", "ctrl+r"], () => {
+      const mainWindow = require("electron").remote.getCurrentWindow();
+      mainWindow.webContents.openDevTools();
       return false;
     });
-    Mousetrap.bind(['command+e', 'ctrl+e'], () => {
-      mainWindow.webContents.openDevTools()
+    mousetrap.bind(["command+e", "ctrl+e"], () => {
+      mainWindow.webContents.openDevTools();
       return false;
     });
   },

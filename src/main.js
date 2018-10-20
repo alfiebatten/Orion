@@ -1,20 +1,21 @@
 import Vue from "vue";
 import App from "./App.vue";
 import VueResource from "vue-resource";
-import VueProgressBar from "vue-progressbar"
-import VueResourceProgressBarInterceptor from "vue-resource-progressbar-interceptor"
+import VueProgressBar from "vue-progressbar";
+import VueResourceProgressBarInterceptor from "vue-resource-progressbar-interceptor";
 import "./registerServiceWorker";
 
 Vue.config.productionTip = false;
 
 Vue.use(VueResource);
+Vue.http.headers.common["Access-Control-Allow-Origin"] = "*";
 Vue.use(VueProgressBar, {
-  color: '#212121',
-  failedColor: '#ff7979',
-  thickness: '10px',
+  color: "#212121",
+  failedColor: "#ff7979",
+  thickness: "10px",
   transition: {
-    speed: '0.25s',
-    opacity: '0.6s',
+    speed: "0.25s",
+    opacity: "0.6s",
     termination: 300
   },
   autoRevert: true,

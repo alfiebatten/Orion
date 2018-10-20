@@ -60,34 +60,46 @@ export default {
     };
   },
   methods: {
-    awaitSocketDataFromServer: function(){
-      this._data.socketData.CurrentSocket.on("DisconnectionFromClient", uniqueIdentifier => {
-        if (!uniqueIdentifier || uniqueIdentifier === null) return;
-        new Notification("Socket: Client disconnected", {
-          body: "User identification: " + uniqueIdentifier,
-          icon: "https://suraj.codes/ASSETS/CLIENT/IMAGES/ORION/1024x1024.png"
-        });
+    awaitSocketDataFromServer: function() {
+      this._data.socketData.CurrentSocket.on(
+        "DisconnectionFromClient",
+        uniqueIdentifier => {
+          if (!uniqueIdentifier || uniqueIdentifier === null) return;
+          new Notification("Socket: Client disconnected", {
+            body: "User identification: " + uniqueIdentifier,
+            icon: "https://suraj.codes/ASSETS/CLIENT/IMAGES/ORION/1024x1024.png"
+          });
 
-        EventBus.$emit("attemptToLoadDevicesAgain", uniqueIdentifier)
-      })
+          EventBus.$emit("attemptToLoadDevicesAgain", uniqueIdentifier);
+        }
+      );
 
-      this._data.socketData.CurrentSocket.on("newConnectionFromClient", uniqueIdentifier => {
-        if (!uniqueIdentifier || uniqueIdentifier === null) return;
-        new Notification("Socket: Got new connection from client", {
-          body: "User identification: " + uniqueIdentifier,
-          icon: "https://suraj.codes/ASSETS/CLIENT/IMAGES/ORION/1024x1024.png"
-        });
+      this._data.socketData.CurrentSocket.on(
+        "newConnectionFromClient",
+        uniqueIdentifier => {
+          if (!uniqueIdentifier || uniqueIdentifier === null) return;
+          new Notification("Socket: Got new connection from client", {
+            body: "User identification: " + uniqueIdentifier,
+            icon: "https://suraj.codes/ASSETS/CLIENT/IMAGES/ORION/1024x1024.png"
+          });
 
-        EventBus.$emit("attemptToLoadDevicesAgain", uniqueIdentifier)
-      })
+          EventBus.$emit("attemptToLoadDevicesAgain", uniqueIdentifier);
+        }
+      );
     },
-    playUnitTheme: function(){
-      let AudioElement = new Audio("https://suraj.codes/ASSETS/CLIENT/AUDIO/UnitTheme.mp3");
-      AudioElement.play()
-      AudioElement.addEventListener('ended', function() {
-        this.currentTime = 0;
-        this.play();
-      }, false);
+    playUnitTheme: function() {
+      let AudioElement = new Audio(
+        "https://suraj.codes/ASSETS/CLIENT/AUDIO/UnitTheme.mp3"
+      );
+      AudioElement.play();
+      AudioElement.addEventListener(
+        "ended",
+        function() {
+          this.currentTime = 0;
+          this.play();
+        },
+        false
+      );
     },
     loadDevicePicker: function() {
       let divElement = this.$el;
@@ -148,14 +160,14 @@ export default {
           easing: "easeOutCubic"
         });
       else
-      animateElements({
-        targets: configData.initiaterButton,
-        opacity: - configData.props.renderedOpacity,
-        duration: configData.props.secondaryDurations,
-        easing: "easeOutCubic"
-      });
+        animateElements({
+          targets: configData.initiaterButton,
+          opacity: -configData.props.renderedOpacity,
+          duration: configData.props.secondaryDurations,
+          easing: "easeOutCubic"
+        });
 
-      this.awaitSocketDataFromServer()
+      this.awaitSocketDataFromServer();
     },
     loadInitialElements: function() {
       let vm = this;
@@ -200,9 +212,10 @@ export default {
     this.loadInitialElements();
 
     await EventBus.$on("connectedClients", parsedData => {
-      console.log("User connected; ", parsedData)
+      console.log("User connected; ", parsedData);
       setTimeout(
-        () => this.allocateButton(parsedData.length), this._props.mainTitleDelay * 2
+        () => this.allocateButton(parsedData.length),
+        this._props.mainTitleDelay * 2
       );
     });
   }

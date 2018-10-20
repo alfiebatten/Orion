@@ -8,8 +8,8 @@ import {
   installVueDevtools
 } from "vue-cli-plugin-electron-builder/lib";
 const isDevelopment = process.env.NODE_ENV !== "production";
-const overrideDev = false
-const {Menu} = require('electron');
+const overrideDev = false;
+const { Menu } = require("electron");
 
 if (overrideDev || isDevelopment) {
   // Don't load any native (external) modules until the following line is run:
@@ -18,42 +18,68 @@ if (overrideDev || isDevelopment) {
 
 // global reference to mainWindow (necessary to prevent window from being garbage collected)
 let mainWindow;
-let menuTemplate = [{
-  label: "Application",
-  submenu: [
-    { label: "About Application", selector: "orderFrontStandardAboutPanel:" },
-    { type: "separator" },
-    { label: "Quit", accelerator: "Command+Q", click: function() { app.quit(); }}
-  ]}, {
-  label: "Edit",
-  submenu: [
-    { label: "Undo", accelerator: "CmdOrCtrl+Z", selector: "undo:" },
-    { label: "Redo", accelerator: "Shift+CmdOrCtrl+Z", selector: "redo:" },
-    { type: "separator" },
-    { label: "Cut", accelerator: "CmdOrCtrl+X", selector: "cut:" },
-    { label: "Copy", accelerator: "CmdOrCtrl+C", selector: "copy:" },
-    { label: "Paste", accelerator: "CmdOrCtrl+V", selector: "paste:" },
-    { label: "Select All", accelerator: "CmdOrCtrl+A", selector: "selectAll:" }
-  ]}
+let menuTemplate = [
+  {
+    label: "Application",
+    submenu: [
+      { label: "About Application", selector: "orderFrontStandardAboutPanel:" },
+      { type: "separator" },
+      {
+        label: "Quit",
+        accelerator: "Command+Q",
+        click: function() {
+          app.quit();
+        }
+      }
+    ]
+  },
+  {
+    label: "Edit",
+    submenu: [
+      { label: "Undo", accelerator: "CmdOrCtrl+Z", selector: "undo:" },
+      { label: "Redo", accelerator: "Shift+CmdOrCtrl+Z", selector: "redo:" },
+      { type: "separator" },
+      { label: "Cut", accelerator: "CmdOrCtrl+X", selector: "cut:" },
+      { label: "Copy", accelerator: "CmdOrCtrl+C", selector: "copy:" },
+      { label: "Paste", accelerator: "CmdOrCtrl+V", selector: "paste:" },
+      {
+        label: "Select All",
+        accelerator: "CmdOrCtrl+A",
+        selector: "selectAll:"
+      }
+    ]
+  }
 ];
 
 // Standard scheme must be registered before the app is ready
 protocol.registerStandardSchemes(["app"], { secure: true });
 function createMainWindow() {
   const window = new BrowserWindow({
-    backgroundColor: "#dcdde1", width: 900,
-    title: "Orion - client", titleBarStyle: "hiddenInset", webPreferences: { webSecurity: false, zoomFactor: 0.65 },
-    icon: path.join(__dirname, 'assets/Icons/1024x1024.png')
-  }); Menu.setApplicationMenu(Menu.buildFromTemplate(menuTemplate));
+    backgroundColor: "#dcdde1",
+    width: 900,
+    title: "Orion - client",
+    titleBarStyle: "hiddenInset",
+    webPreferences: { webSecurity: false, zoomFactor: 0.65 },
+    icon: path.join(__dirname, "assets/Icons/1024x1024.png")
+  });
+  Menu.setApplicationMenu(Menu.buildFromTemplate(menuTemplate));
 
   if (isDevelopment) {
     window.loadURL(process.env.WEBPACK_DEV_SERVER_URL);
     if (!process.env.IS_TEST) window.webContents.openDevTools();
   } else {
     createProtocol("app");
-    window.loadURL( formatUrl({ pathname: path.join(__dirname, "index.html"), protocol: "file", slashes: true }) );
+    window.loadURL(
+      formatUrl({
+        pathname: path.join(__dirname, "index.html"),
+        protocol: "file",
+        slashes: true
+      })
+    );
   }
-  window.on("closed", () => { mainWindow = null });
+  window.on("closed", () => {
+    mainWindow = null;
+  });
   window.webContents.on("devtools-opened", () => {
     window.focus();
     setImmediate(() => window.focus());
@@ -85,6 +111,4 @@ app.on("ready", async () => {
     await installVueDevtools();
   }
   mainWindow = createMainWindow();
-
-
 });

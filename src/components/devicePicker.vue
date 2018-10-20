@@ -78,7 +78,7 @@ export default {
         .get("http://198.211.125.38:3000/activeClients", {
           "Access-Control-Allow-Origin": "*"
         })
-        .then (
+        .then(
           result => {
             let parsedData = JSON.parse(result.bodyText);
             EventBus.$emit("connectedClients", parsedData);
@@ -178,8 +178,8 @@ export default {
     return {
       userData: [],
       classes: {
-        online: 'onlineTransform',
-        offline: 'offlineTransform'
+        online: "onlineTransform",
+        offline: "offlineTransform"
       },
       socketData: {
         CurrentSocket: SocketsIO("http://198.211.125.38:3000/")
