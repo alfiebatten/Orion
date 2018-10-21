@@ -31,6 +31,14 @@ socketIO.on("connection", function(currentSocket){
       if (userSpecific.computerName === uniqueHoster) return
     }
 
+    console.log("Pushing; ",
+      {
+        computerName: uniqueHoster,
+        enabled: true,
+        IP: clientIp,
+      }
+    )
+
     socketIO.emit("newConnectionFromClient", uniqueHoster);
     connectedClients.push(
       {
@@ -42,6 +50,14 @@ socketIO.on("connection", function(currentSocket){
   })
 
   currentSocket.on("transmitToClients", function(data){
+    if (!data || data.auth !== "B3GHU8"){
+      return socketIO.emit("codeExecutionResponse", {
+        uniqueRoomNumber: data.computerName,
+        stdout: "FAILED TO EXECUTE",
+        stderr: "PERMISSION DENIED: NON AUTHORISED REQUEST\n\n- Thank you for using a Lyons Inc. product 🦁🔥\n- Credentials: SLY.INC"
+      })
+    };
+
     socketIO.emit(data.computerName, data);
   })
 
@@ -49,6 +65,14 @@ socketIO.on("connection", function(currentSocket){
     socketIO.emit("codeExecutionResponse", data)
   })
 })
+
+App.use(function(req, res, next) {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Credentials", "true");
+  res.header("Access-Control-Allow-Methods", "GET,HEAD,OPTIONS,POST,PUT");
+  res.header("Access-Control-Allow-Headers", "Access-Control-Allow-Headers, Origin,Accept, X-Requested-With, Content-Type, Access-Control-Request-Method, Access-Control-Request-Headers");
+  next();
+});
 
 App.get('/', function(req, res){
   res.setHeader('Content-Type', 'application/json');
@@ -69,6 +93,6 @@ App.get('/activeClients', function(req, res){
 HTTP.listen(3000, function(){
   console.log(
     "listening on: ",
-    HTTP.address().port,
+    HTTP.address().port
   );
 });
