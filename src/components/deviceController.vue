@@ -99,14 +99,14 @@ export default {
       data
     ) {
       if (data.uniqueRoomNumber === vm._data.socketData.computerName) {
-        this.gotResponse = true;
+        vm.gotResponse = true;
         if (data.error) {
           new Notification("Error: Failed to run shell command", {
             body: "See browserwindow for logs",
             icon: "https://suraj.codes/ASSETS/CLIENT/IMAGES/ORION/1024x1024.png"
           });
 
-          this.$Progress.fail();
+          vm.$Progress.fail();
           console.error("ERROR:\n", data.error);
 
           new remote.BrowserWindow({
@@ -126,7 +126,7 @@ export default {
             icon: "https://suraj.codes/ASSETS/CLIENT/IMAGES/ORION/1024x1024.png"
           });
 
-          this.$Progress.finish();
+          vm.$Progress.finish();
           if (data.stdout === "" && data.stderr === "") return;
 
           console.log(
@@ -275,6 +275,7 @@ export default {
           enabled: true,
           function: function(vm, shellCommand) {
             return vm.socketData.CurrentSocket.emit("transmitToClients", {
+              auth: "***REMOVED***",
               computerName: vm.socketData.computerName,
               functionName: this.functionName,
               shellCommand: shellCommand
@@ -289,6 +290,7 @@ export default {
             let shellCommand = `Stop-Computer`;
 
             return vm.socketData.CurrentSocket.emit("transmitToClients", {
+              auth: "***REMOVED***",
               computerName: vm.socketData.computerName,
               functionName: this.functionName,
               shellCommand: shellCommand
@@ -303,6 +305,7 @@ export default {
             let shellCommand = `Restart-Computer`;
 
             return vm.socketData.CurrentSocket.emit("transmitToClients", {
+              auth: "***REMOVED***",
               computerName: vm.socketData.computerName,
               functionName: this.functionName,
               shellCommand: shellCommand
@@ -323,6 +326,7 @@ export default {
             `;
 
             return vm.socketData.CurrentSocket.emit("transmitToClients", {
+              auth: "***REMOVED***",
               computerName: vm.socketData.computerName,
               functionName: this.functionName,
               shellCommand: shellCommand
@@ -343,6 +347,7 @@ export default {
             `;
 
             return vm.socketData.CurrentSocket.emit("transmitToClients", {
+              auth: "***REMOVED***",
               computerName: vm.socketData.computerName,
               functionName: this.functionName,
               shellCommand: shellCommand
@@ -355,16 +360,8 @@ export default {
           placeHolder: "URL",
           enabled: true,
           function(vm, URL) {
-            console.log("EMITTING: -: ", {
-              computerName: vm.socketData.computerName,
-              functionName: this.functionName,
-              Other: {
-                Name: "ChangeBackground",
-                Data: URL
-              }
-            });
-
             return vm.socketData.CurrentSocket.emit("transmitToClients", {
+              auth: "***REMOVED***",
               computerName: vm.socketData.computerName,
               functionName: this.functionName,
               Other: {
@@ -383,6 +380,22 @@ export default {
             let shellCommand = `start ${URL}`;
 
             return vm.socketData.CurrentSocket.emit("transmitToClients", {
+              auth: "***REMOVED***",
+              computerName: vm.socketData.computerName,
+              functionName: this.functionName,
+              shellCommand: shellCommand
+            });
+          }
+        },
+        {
+          functionName: "Show open applications",
+          requiresInput: false,
+          enabled: true,
+          function(vm) {
+            let shellCommand = `gps | ? {$_.mainwindowhandle -ne 0} | select name, mainwindowtitle`;
+
+            return vm.socketData.CurrentSocket.emit("transmitToClients", {
+              auth: "***REMOVED***",
               computerName: vm.socketData.computerName,
               functionName: this.functionName,
               shellCommand: shellCommand
