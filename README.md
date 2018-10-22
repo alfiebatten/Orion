@@ -6,7 +6,7 @@
   <a href="https://api.codeclimate.com/v1/badges/03b7dfafbbf28b6fe8e4/maintainability">
     <img src="https://api.codeclimate.com/v1/badges/03b7dfafbbf28b6fe8e4/maintainability" alt="Maintainability" height="18">
   </a>
-  <a class="badge-align" href="https://www.codacy.com/app/o-y/Orion">
+  <a href="https://www.codacy.com/app/o-y/Orion">
     <img src="https://api.codacy.com/project/badge/Grade/3a38f47f410b4c46a0e8446f8041a58b" height="18"/>
   </a>
   <a href="https://david-dm.org/O-Y/Orion.svg">
