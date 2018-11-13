@@ -21,7 +21,6 @@
 </div>
 
 <p align="center">
-  In Greek mythology, Orion, son of Poseidon was a giant huntsman whom Zeus placed among the stars as the constellation of Orion. This project has been named Orion to symbolize the connectivity and impending, sentinel like watch the app imposes on the client.
   Orion consists of three parts, the Client, the Host and the Server. The client runs on the targets computer, silent and unobtrusive - designed to stay hidden with minimal resource impact. The host runs as an app on the hosts computer, a sleek interface filled with time saving features, allows for an intuitive framework, giving the host access over the given client. The server acts as a middleware for both the client and the host - using the JavaScript library Sockets.io means the host can view in real time what clients are connected. Using notifications the host is alerted when a client connects and disconnects.
   The current system allows for full asynchronous duplex transmission, in the future integration will be added allowing the host to select multiple clients. A password based system may also be implemented to ensure the integrity of clients are retained.
 </p>
