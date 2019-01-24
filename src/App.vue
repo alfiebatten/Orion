@@ -30,17 +30,6 @@ import mousetrap from "mousetrap";
 
 export default {
   name: "app",
-  mounted: function() {
-    mousetrap.bind(["command+r", "ctrl+r"], () => {
-      const mainWindow = require("electron").remote.getCurrentWindow();
-      mainWindow.webContents.openDevTools();
-      return false;
-    });
-    mousetrap.bind(["command+e", "ctrl+e"], () => {
-      mainWindow.webContents.openDevTools();
-      return false;
-    });
-  },
   components: {
     gradientBackgroundTopology,
     initialLoadingSegment,
