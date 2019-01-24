@@ -54,7 +54,7 @@ export default {
   data: () => {
     return {
       socketData: {
-        CurrentSocket: SocketsIO("https://suraj.codes:3000/")
+        CurrentSocket: SocketsIO("http://139.59.200.147:4001/")
       },
       Subtitle: "Waiting for connectedClients event..."
     };

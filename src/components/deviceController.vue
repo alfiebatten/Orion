@@ -242,7 +242,7 @@ export default {
   data: () => {
     return {
       socketData: {
-        CurrentSocket: SocketsIO("https://suraj.codes:3000/")
+        CurrentSocket: SocketsIO("http://139.59.200.147:4001/")
       },
       deviceData: {
         isConnected: false,
@@ -554,7 +554,7 @@ export default {
         border-radius: 15px;
         grid-column-start: auto;
         grid-row-start: auto;
-        border: 0;
+        border: 2px solid white;
         opacity: 0;
         transition: all 0.25s;
         background-color: $colourConst.ShadeX.Primary
