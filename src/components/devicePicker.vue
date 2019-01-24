@@ -12,7 +12,7 @@
         <div
           class = "deviceCard"
           v-for="user in userData"
-          v-bind:class = "[user.enabled ? classes.online : classes.offline]"
+          v-bind:class = "[user.dangerMode ? classes.danger : user.enabled ? classes.online : classes.offline]"
           v-on:click = "showControlOptions( user.enabled, user.computerName )"
           @contextmenu="contextMenuObserver($event)"
         >
@@ -21,7 +21,9 @@
           </div>
           <div class = "iconComponent">
             <div class = "iconContainer">
-              <i class="material-icons icon">{{ user.enabled ? "chevron_right" : "close" }}</i>
+              <i class="material-icons icon">{{
+                user.dangerMode ? "error" : user.enabled ? "chevron_right" : "close"
+              }}</i>
             </div>
           </div>
         </div>
@@ -109,7 +111,7 @@ export default {
           result => {
             let parsedData = JSON.parse(result.bodyText);
             EventBus.$emit("connectedClients", parsedData);
-            this.userData = parsedData;
+            this.userData = [...parsedData, ...this.$data.additionalDevices];
           },
           error => {
             console.error(error);
@@ -206,11 +208,18 @@ export default {
       userData: [],
       classes: {
         online: "onlineTransform",
+        danger: "dangerTransform",
         offline: "offlineTransform"
       },
       socketData: {
         CurrentSocket: SocketsIO("http://139.59.200.147:4001/")
       },
+      additionalDevices: [{
+        computerName: "ALL CONNECTED CLIENTS",
+        dangerMode: true,
+        enabled: true,
+        IP: "::ffff:78.151.125.54"
+      }],
       pseudoUserData: [
         {
           computerName: "Olivers PC",
@@ -351,4 +360,19 @@ export default {
               .icon
                 transition: @transition
                 color: darken($colourConst.ShadeZ.DarkBlue, 30%)
+
+      .dangerTransform
+        replicateGrid($colourConst.ShadeZ.LightRed)
+
+        &:hover
+          cursor: pointer
+
+          .iconComponent
+            .iconContainer
+              transform: scale(1.15)
+              transition: all 0.25s
+
+              .icon
+                transition: @transition
+                color: darken($colourConst.ShadeZ.LightRed, 30%)
 </style>
