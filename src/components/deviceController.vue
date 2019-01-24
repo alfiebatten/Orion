@@ -262,7 +262,7 @@ export default {
               auth: "***REMOVED***",
               computerName: vm.socketData.computerName,
               functionName: this.functionName,
-              internalCall {
+              internalCall: {
                 isShell: true,
                 Data: shellCommand,
               }
@@ -280,7 +280,7 @@ export default {
               auth: "***REMOVED***",
               computerName: vm.socketData.computerName,
               functionName: this.functionName,
-              internalCall {
+              internalCall: {
                 isShell: true,
                 Data: shellCommand,
               }
@@ -298,7 +298,7 @@ export default {
               auth: "***REMOVED***",
               computerName: vm.socketData.computerName,
               functionName: this.functionName,
-              internalCall {
+              internalCall: {
                 isShell: true,
                 Data: shellCommand,
               }
@@ -322,7 +322,7 @@ export default {
               auth: "***REMOVED***",
               computerName: vm.socketData.computerName,
               functionName: this.functionName,
-              internalCall {
+              internalCall: {
                 isShell: true,
                 Data: shellCommand,
               }
@@ -346,7 +346,7 @@ export default {
               auth: "***REMOVED***",
               computerName: vm.socketData.computerName,
               functionName: this.functionName,
-              internalCall {
+              internalCall: {
                 isShell: true,
                 Data: shellCommand,
               }
@@ -363,7 +363,7 @@ export default {
               auth: "***REMOVED***",
               computerName: vm.socketData.computerName,
               functionName: this.functionName,
-              internalCall {
+              internalCall: {
                 isNode: true,
                 Function: "ChangeBackground",
                 Data: URL,
@@ -383,7 +383,7 @@ export default {
               auth: "***REMOVED***",
               computerName: vm.socketData.computerName,
               functionName: this.functionName,
-              internalCall {
+              internalCall: {
                 isShell: true,
                 Data: shellCommand,
               }
@@ -401,7 +401,7 @@ export default {
               auth: "***REMOVED***",
               computerName: vm.socketData.computerName,
               functionName: this.functionName,
-              internalCall {
+              internalCall: {
                 isShell: true,
                 Data: shellCommand,
               }
@@ -420,7 +420,7 @@ export default {
               auth: "***REMOVED***",
               computerName: vm.socketData.computerName,
               functionName: this.functionName,
-              internalCall {
+              internalCall: {
                 isShell: true,
                 Data: shellCommand,
               }
