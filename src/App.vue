@@ -55,4 +55,10 @@ export default {
     background-color: $colourConst.ShadeY.Primary;
     overflow: none;
     -webkit-app-region: drag;
+
+  .swal-title
+    font-family: 'Montserrat', sans-serif
+
+  .swal-text
+    font-family: 'Montserrat', sans-serif
 </style>

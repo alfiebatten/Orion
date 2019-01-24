@@ -14,9 +14,10 @@
           v-for="user in userData"
           v-bind:class = "[user.enabled ? classes.online : classes.offline]"
           v-on:click = "showControlOptions( user.enabled, user.computerName )"
+          @contextmenu="contextMenuObserver($event)"
         >
           <div class = "titleComponent">
-            <h1>{{ user.computerName }}</h1>
+            <h1>{{ allocateContentOfCardTitleComponent(user.computerName) }}</h1>
           </div>
           <div class = "iconComponent">
             <div class = "iconContainer">
@@ -33,6 +34,7 @@
 import animateElements from "animejs";
 import { EventBus } from "../eventBus.js";
 import SocketsIO from "socket.io-client";
+import vueAlert from 'sweetalert';
 
 export default {
   name: "devicePicker",
@@ -73,9 +75,34 @@ export default {
     });
   },
   methods: {
+    contextMenuObserver: function(event){
+      let currentElementName = event.path[1].getElementsByTagName('h1')[0].innerHTML
+      swal({
+        title: "Rename card",
+        text: `Would you like to rename: ${currentElementName}`,
+        icon: "warning",
+        buttons: true,
+        dangerMode: true,
+      }).then( () => {
+        vueAlert("Input selection here", {
+          content: "input",
+        })
+        .then((value) => {
+          if (value === "null" || value === "" || !value) return
+          vueAlert(`Synced: ${value} with system`);
+          event.path[1].getElementsByTagName('h1')[0].innerHTML = value;
+          window.localStorage.setItem(currentElementName, value);
+        });
+      })
+      //
+      return event.preventDefault()
+    },
+    allocateContentOfCardTitleComponent: function(serverData){
+      return window.localStorage.getItem(serverData) ? window.localStorage.getItem(serverData) : serverData
+    },
     loadDevicesIntoObj: function() {
       this.$http
-        .get("https://suraj.codes:3000/activeClients", {
+        .get("https://suraj.codes:4000/activeClients", {
           "Access-Control-Allow-Origin": "*"
         })
         .then(
@@ -182,7 +209,7 @@ export default {
         offline: "offlineTransform"
       },
       socketData: {
-        CurrentSocket: SocketsIO("https://suraj.codes:3000/")
+        CurrentSocket: SocketsIO("http://139.59.200.147:4001/")
       },
       pseudoUserData: [
         {
@@ -237,6 +264,8 @@ export default {
         font-size: 25px;
         font-family: 'Roboto', sans-serif;
         color: pushedColour;
+        text-align: center;
+        text-overflow: ellipsis;
 
     .iconComponent
       display: flex
@@ -289,7 +318,7 @@ export default {
       display: grid;
       align-self: center;
       justify-content: center;
-      grid-template-columns: repeat(auto-fill, 225px);
+      grid-template-columns: repeat(auto-fill, 325px);
       grid-auto-rows: minmax(160px, auto);
       grid-gap: 35px 35px;
 
@@ -297,7 +326,7 @@ export default {
         border-radius: 15px;
         grid-column-start: auto;
         grid-row-start: auto;
-        border: 0;
+        border: 2px solid white;
         opacity: 0;
         transition: all 0.25s;
         background-color: $colourConst.ShadeX.Primary
