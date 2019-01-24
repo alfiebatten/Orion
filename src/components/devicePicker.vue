@@ -75,7 +75,7 @@ export default {
   methods: {
     loadDevicesIntoObj: function() {
       this.$http
-        .get("http://198.211.125.38:3000/activeClients", {
+        .get("https://suraj.codes:3000/activeClients", {
           "Access-Control-Allow-Origin": "*"
         })
         .then(
@@ -182,7 +182,7 @@ export default {
         offline: "offlineTransform"
       },
       socketData: {
-        CurrentSocket: SocketsIO("http://198.211.125.38:3000/")
+        CurrentSocket: SocketsIO("https://suraj.codes:3000/")
       },
       pseudoUserData: [
         {
