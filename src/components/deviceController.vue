@@ -26,7 +26,7 @@
               <div class = "inputContainer">
                 <input
                   v-bind:placeholder = "controlOptions.placeHolder"
-                  v-bind:value = "nessescaryFunctions.Store.get(controlOptions.functionName)"
+                  v-bind:value = "nessescaryFunctions.Store.getItem(controlOptions.functionName)"
                 >
               </div>
               <div class = "iconContainer">
@@ -49,8 +49,6 @@
 <script>
 import animateElements from "animejs";
 import { EventBus } from "../eventBus.js";
-import { remote } from "electron";
-import Store from "electron-store";
 import SocketsIO from "socket.io-client";
 
 export default {
@@ -109,14 +107,7 @@ export default {
           vm.$Progress.fail();
           console.error("ERROR:\n", data.error);
 
-          new remote.BrowserWindow({
-            parent: remote.getCurrentWindow(),
-            backgroundColor: "#151414",
-            title: "Orion - output",
-            titleBarStyle: "hiddenInset",
-            width: 400,
-            height: 300
-          }).loadURL(
+          window.open(
             "https://suraj.codes/ASSETS/CLIENT/ORION/?ERROR=" +
               data.error.toString().replace(/\r?\n/g, "<__NEWLINE__>")
           );
@@ -140,14 +131,7 @@ export default {
               data.stderr.replace(/\r?\n/g, "<__NEWLINE__>")
           );
 
-          new remote.BrowserWindow({
-            parent: remote.getCurrentWindow(),
-            backgroundColor: "#151414",
-            title: "Orion - output",
-            titleBarStyle: "hiddenInset",
-            width: 400,
-            height: 300
-          }).loadURL(
+          window.open(
             "https://suraj.codes/ASSETS/CLIENT/ORION/?STDOUT=" +
               data.stdout.replace(/\r?\n/g, "<__NEWLINE__>") +
               "&STDERR=" +
@@ -180,7 +164,7 @@ export default {
           .getElementsByClassName("inputContainer")[0]
           .getElementsByTagName("input")[0].value;
         if (userInput !== "") {
-          this._data.nessescaryFunctions.Store.set(
+          this._data.nessescaryFunctions.Store.setItem(
             identifier.functionName,
             userInput
           );
@@ -258,14 +242,14 @@ export default {
   data: () => {
     return {
       socketData: {
-        CurrentSocket: SocketsIO("http://198.211.125.38:3000/")
+        CurrentSocket: SocketsIO("https://suraj.codes:3000/")
       },
       deviceData: {
         isConnected: false,
         name: "<< AWAITING CONNECTION >>"
       },
       nessescaryFunctions: {
-        Store: new Store()
+        Store: window.localStorage
       },
       controlFunctions: [
         {
@@ -278,7 +262,10 @@ export default {
               auth: "***REMOVED***",
               computerName: vm.socketData.computerName,
               functionName: this.functionName,
-              shellCommand: shellCommand
+              internalCall {
+                isShell: true,
+                Data: shellCommand,
+              }
             });
           }
         },
@@ -293,7 +280,10 @@ export default {
               auth: "***REMOVED***",
               computerName: vm.socketData.computerName,
               functionName: this.functionName,
-              shellCommand: shellCommand
+              internalCall {
+                isShell: true,
+                Data: shellCommand,
+              }
             });
           }
         },
@@ -308,7 +298,10 @@ export default {
               auth: "***REMOVED***",
               computerName: vm.socketData.computerName,
               functionName: this.functionName,
-              shellCommand: shellCommand
+              internalCall {
+                isShell: true,
+                Data: shellCommand,
+              }
             });
           }
         },
@@ -329,7 +322,10 @@ export default {
               auth: "***REMOVED***",
               computerName: vm.socketData.computerName,
               functionName: this.functionName,
-              shellCommand: shellCommand
+              internalCall {
+                isShell: true,
+                Data: shellCommand,
+              }
             });
           }
         },
@@ -350,7 +346,10 @@ export default {
               auth: "***REMOVED***",
               computerName: vm.socketData.computerName,
               functionName: this.functionName,
-              shellCommand: shellCommand
+              internalCall {
+                isShell: true,
+                Data: shellCommand,
+              }
             });
           }
         },
@@ -364,9 +363,10 @@ export default {
               auth: "***REMOVED***",
               computerName: vm.socketData.computerName,
               functionName: this.functionName,
-              Other: {
-                Name: "ChangeBackground",
-                Data: URL
+              internalCall {
+                isNode: true,
+                Function: "ChangeBackground",
+                Data: URL,
               }
             });
           }
@@ -383,7 +383,10 @@ export default {
               auth: "***REMOVED***",
               computerName: vm.socketData.computerName,
               functionName: this.functionName,
-              shellCommand: shellCommand
+              internalCall {
+                isShell: true,
+                Data: shellCommand,
+              }
             });
           }
         },
@@ -398,7 +401,10 @@ export default {
               auth: "***REMOVED***",
               computerName: vm.socketData.computerName,
               functionName: this.functionName,
-              shellCommand: shellCommand
+              internalCall {
+                isShell: true,
+                Data: shellCommand,
+              }
             });
           }
         },
@@ -414,7 +420,10 @@ export default {
               auth: "***REMOVED***",
               computerName: vm.socketData.computerName,
               functionName: this.functionName,
-              shellCommand: shellCommand
+              internalCall {
+                isShell: true,
+                Data: shellCommand,
+              }
             });
           }
         },
