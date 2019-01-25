@@ -214,12 +214,14 @@ export default {
       socketData: {
         CurrentSocket: SocketsIO("http://139.59.200.147:4001/")
       },
-      additionalDevices: [{
-        computerName: "ALL CONNECTED CLIENTS",
-        dangerMode: true,
-        enabled: true,
-        IP: "::ffff:78.151.125.54"
-      }],
+      additionalDevices: [
+        {
+          computerName: "MAINFRAME",
+          dangerMode: true,
+          enabled: true,
+          IP: "0.0.0.0"
+        }
+      ],
       pseudoUserData: [
         {
           computerName: "Olivers PC",
