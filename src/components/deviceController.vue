@@ -52,6 +52,9 @@ import { EventBus } from "../eventBus.js"
 import SocketsIO from "socket.io-client"
 import vueAlert from 'sweetalert'
 import codemirror from 'codemirror'
+import 'codemirror/lib/codemirror.css'
+import 'codemirror/theme/monokai.css'
+
 
 export default {
   name: "controlFunctions",
@@ -100,55 +103,73 @@ export default {
     ) {
       if (data.uniqueRoomNumber === vm._data.socketData.computerName) {
         vm.gotResponse = true;
+        vm.$Progress.finish();
+
+        [...document.getElementsByClassName("CodeMirror")].map(
+          element => element.remove()
+        );
+
         if (data.error) {
           new Notification("Error: Failed to run shell command", {
             body: "See browserwindow for logs",
             icon: "https://suraj.codes/ASSETS/CLIENT/IMAGES/ORION/1024x1024.png"
           });
 
-          vm.$Progress.fail();
-          console.error("ERROR:\n", data.error);
+          let ERROR = data.error.replace(/\r?\n/g, "\n\r")
 
-          window.open(
-            "https://suraj.codes/ASSETS/CLIENT/ORION/?ERROR=" +
-              data.error.toString().replace(/\r?\n/g, "<__NEWLINE__>")
-          );
+          let codeElement = document.createElement("textarea")
+          codeElement.innerHTML = `ERROR:\n${ERROR}`
+          document.body.appendChild(codeElement)
 
+          codemirror.fromTextArea(codeElement, {
+            lineNumbers: true,
+            theme: 'monokai'
+          })
 
+          let codeMirrorElement = document.getElementsByClassName("CodeMirror")[0]
+          codeMirrorElement.style.textAlign = "left"
 
+          vueAlert({
+            content: codeMirrorElement
+          })
+
+          let swalModal = document.getElementsByClassName("swal-modal")[0]
+          swalModal.style.backgroundColor = "#e74c3c"
+
+          let codeMirrorGutter = document.getElementsByClassName("CodeMirror-gutters")[0]
+          codeMirrorGutter.style.backgroundColor = "#e74c3c"
+
+          let codeMirrorWindow = document.getElementsByClassName("CodeMirror")[0]
+          codeMirrorWindow.style.backgroundColor = "#e74c3c"
         } else {
           new Notification("Success: Ran shell command", {
             body: "See browserwindow for logs",
             icon: "https://suraj.codes/ASSETS/CLIENT/IMAGES/ORION/1024x1024.png"
           });
 
-          vm.$Progress.finish();
           if (data.stdout === "" && data.stderr === "") return;
 
-          console.log(
-            "STDOUT:\n",
-            data.stdout,
-            "\nSTDERR:\n",
-            data.stderr,
-            "https://suraj.codes/ASSETS/CLIENT/ORION/?STDOUT=" +
-              data.stdout.replace(/\r?\n/g, "<__NEWLINE__>") +
-              "&STDERR=" +
-              data.stderr.replace(/\r?\n/g, "<__NEWLINE__>")
-          );
+          let STDOUT = data.stdout.replace(/\r?\n/g, "\n\r")
+          let STDERR = data.stderr.replace(/\r?\n/g, "\n\r")
 
-          let codeElement = document.createElement("textarea").innerHTML = "test"
+          let codeElement = document.createElement("textarea")
+          codeElement.innerHTML = `STDOUT:\n${STDOUT}\n\nSTDERR:\n${STDERR}`
+          document.body.appendChild(codeElement)
 
-          vueAlert("Hello world!", {
-            content: codeElement,
+          codemirror.fromTextArea(codeElement, {
+            lineNumbers: true,
+            theme: 'monokai'
           });
 
-          /*window.open(
-            "https://suraj.codes/ASSETS/CLIENT/ORION/?STDOUT=" +
-              data.stdout.replace(/\r?\n/g, "<__NEWLINE__>") +
-              "&STDERR=" +
-              data.stderr.replace(/\r?\n/g, "<__NEWLINE__>")
-          );*/
+          let codeMirrorElement = document.getElementsByClassName("CodeMirror")[0]
+          codeMirrorElement.style.textAlign = "left"
 
+          vueAlert({
+            content: codeMirrorElement
+          });
+
+          let swalModal = document.getElementsByClassName("swal-modal")[0]
+          swalModal.style.backgroundColor = "#272822"
         }
       }
     });
