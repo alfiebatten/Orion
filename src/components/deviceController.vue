@@ -13,7 +13,7 @@
           class = "deviceCard"
           v-for="controlOptions in controlFunctions"
           :key="controlOptions.functionName"
-          v-bind:class = "[controlOptions.requiresInput ? 'expandCard' : '']"
+          v-bind:class = "[controlOptions.requiresInput ? controlOptions.inputAmounts && controlOptions.inputAmounts > 1 ? 'expandCard-3' : 'expandCard-2' : '']"
         >
           <div
             v-bind:class = "[controlOptions.enabled && controlOptions.function ? 'onlineTransform' : 'offlineTransform']"
@@ -24,10 +24,24 @@
 
             <div v-if = "controlOptions.requiresInput" class = "iconAndInputComponent">
               <div class = "inputContainer">
-                <input
-                  v-bind:placeholder = "controlOptions.placeHolder"
-                  v-bind:value = "nessescaryFunctions.Store.getItem(controlOptions.functionName)"
-                >
+                <template v-if="controlOptions.inputAmounts > 1">
+                  <input
+                    v-bind:placeholder = "controlOptions.placeHolderPrimary"
+                    v-bind:value = "nessescaryFunctions.Store.getItem(controlOptions.functionName + '_PRIMARY')"
+                    style = "width: 50% !important"
+                  >
+                  <input
+                    v-bind:placeholder = "controlOptions.placeHolderSecondary"
+                    v-bind:value = "nessescaryFunctions.Store.getItem(controlOptions.functionName + '_SECONDARY')"
+                    style = "width: 49% !important; margin-left: 1%"
+                  >
+                </template>
+                <template v-else>
+                  <input
+                    v-bind:placeholder = "controlOptions.placeHolder"
+                    v-bind:value = "nessescaryFunctions.Store.getItem(controlOptions.functionName)"
+                  >
+                </template>
               </div>
               <div class = "iconContainer">
                 <i v-on:click = "prepareExecution(controlOptions, $event, 'requiresInput')" class="material-icons icon">{{ controlOptions.enabled && controlOptions.function ? 'chevron_right' : 'close' }}</i>
@@ -193,27 +207,63 @@ export default {
     prepareExecution: function(identifier, eventElement, requiresInput) {
       if (!identifier.enabled) return;
       if (requiresInput) {
-        let userInput = eventElement.target.parentElement.parentElement
-          .getElementsByClassName("inputContainer")[0]
-          .getElementsByTagName("input")[0].value;
-        if (userInput !== "") {
-          this._data.nessescaryFunctions.Store.setItem(
-            identifier.functionName,
-            userInput
-          );
-          this.gotResponse = false;
-          this.$Progress.start();
-          setTimeout(
-            function() {
-              if (this.gotResponse === false) this.$Progress.fail();
-            }.bind(this),
-            5000
-          );
-          identifier.function(this, userInput);
+        if (eventElement.target.parentElement.parentElement.getElementsByClassName("inputContainer")[0].getElementsByTagName("input").length > 1){
+          let primaryInput = eventElement.target.parentElement.parentElement
+            .getElementsByClassName("inputContainer")[0]
+            .getElementsByTagName("input")[0].value
+
+          let secondaryInput = eventElement.target.parentElement.parentElement
+            .getElementsByClassName("inputContainer")[0]
+            .getElementsByTagName("input")[0].value
+
+          if (primaryInput !== "" || secondaryInput !== "") {
+            this._data.nessescaryFunctions.Store.setItem(
+              identifier.functionName + "_PRIMARY",
+              primaryInput,
+            );
+
+            this._data.nessescaryFunctions.Store.setItem(
+              identifier.functionName + "_SECONDARY",
+              secondaryInput,
+            );
+
+            this.gotResponse = false;
+            this.$Progress.start();
+            setTimeout(
+              function() {
+                if (this.gotResponse === false) this.$Progress.fail();
+              }.bind(this),
+              5000
+            );
+            identifier.function(this, primaryInput, secondaryInput);
+          } else {
+            new Notification("Failed to call designated function", {
+              body: "Input can not be blank"
+            });
+          }
         } else {
-          new Notification("Failed to call designated function", {
-            body: "Input can not be blank"
-          });
+          let userInput = eventElement.target.parentElement.parentElement
+            .getElementsByClassName("inputContainer")[0]
+            .getElementsByTagName("input")[0].value;
+          if (userInput !== "") {
+            this._data.nessescaryFunctions.Store.setItem(
+              identifier.functionName,
+              userInput
+            );
+            this.gotResponse = false;
+            this.$Progress.start();
+            setTimeout(
+              function() {
+                if (this.gotResponse === false) this.$Progress.fail();
+              }.bind(this),
+              5000
+            );
+            identifier.function(this, userInput);
+          } else {
+            new Notification("Failed to call designated function", {
+              body: "Input can not be blank"
+            });
+          }
         }
       } else {
         this.gotResponse = false;
@@ -448,7 +498,6 @@ export default {
           enabled: true,
           function(vm, NAME) {
             let shellCommand = `Stop-Process -Name "${NAME}" -force`;
-
             return vm.socketData.CurrentSocket.emit("transmitToClients", {
               auth: "***REMOVED***",
               computerName: vm.socketData.computerName,
@@ -471,6 +520,19 @@ export default {
           requiresInput: true,
           placeHolder: "Hello World",
           enabled: true
+        },
+        {
+          functionName: "Download file",
+          requiresInput: true,
+          inputAmounts: 2,
+
+          placeHolderPrimary: "URL",
+          placeHolderSecondary: "PATH",
+
+          enabled: true,
+          function: function(vm, URL, PATH) {
+            console.log(vm, URL, PATH)
+          }
         }
       ]
     };
@@ -581,8 +643,11 @@ export default {
       grid-auto-rows: 200px;
       grid-gap: 35px 35px;
 
-      .expandCard
+      .expandCard-2
         grid-column: auto / span 2;
+
+      .expandCard-3
+        grid-column: auto / span 3;
 
       .deviceCard
         border-radius: 15px;

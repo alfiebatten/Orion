@@ -56,6 +56,9 @@ export default {
     overflow: none;
     -webkit-app-region: drag;
 
+  .swal-modal
+    width: 85% !important
+    
   .swal-title
     font-family: 'Montserrat', sans-serif
 
