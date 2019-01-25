@@ -47,9 +47,11 @@
 </template>
 
 <script>
-import animateElements from "animejs";
-import { EventBus } from "../eventBus.js";
-import SocketsIO from "socket.io-client";
+import animateElements from "animejs"
+import { EventBus } from "../eventBus.js"
+import SocketsIO from "socket.io-client"
+import vueAlert from 'sweetalert'
+import codemirror from 'codemirror'
 
 export default {
   name: "controlFunctions",
@@ -111,6 +113,9 @@ export default {
             "https://suraj.codes/ASSETS/CLIENT/ORION/?ERROR=" +
               data.error.toString().replace(/\r?\n/g, "<__NEWLINE__>")
           );
+
+
+
         } else {
           new Notification("Success: Ran shell command", {
             body: "See browserwindow for logs",
@@ -131,12 +136,19 @@ export default {
               data.stderr.replace(/\r?\n/g, "<__NEWLINE__>")
           );
 
-          window.open(
+          let codeElement = document.createElement("textarea").innerHTML = "test"
+
+          vueAlert("Hello world!", {
+            content: codeElement,
+          });
+
+          /*window.open(
             "https://suraj.codes/ASSETS/CLIENT/ORION/?STDOUT=" +
               data.stdout.replace(/\r?\n/g, "<__NEWLINE__>") +
               "&STDERR=" +
               data.stderr.replace(/\r?\n/g, "<__NEWLINE__>")
-          );
+          );*/
+
         }
       }
     });
@@ -455,7 +467,8 @@ export default {
 
       h1
         justify-content: center
-        font-family: 'Roboto', sans-serif;
+        text-align: center
+        font-family: 'Roboto', sans-serif
         color: pushedColour
 
     .iconComponent
