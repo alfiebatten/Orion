@@ -68,7 +68,8 @@ import vueAlert from 'sweetalert'
 import codemirror from 'codemirror'
 import 'codemirror/lib/codemirror.css'
 import 'codemirror/theme/monokai.css'
-
+import Keyboard from "simple-keyboard";
+import "simple-keyboard/build/css/index.css";
 
 export default {
   name: "controlFunctions",
@@ -334,6 +335,7 @@ export default {
       nessescaryFunctions: {
         Store: window.localStorage
       },
+      isKeyboardActive: false,
       controlFunctions: [
         {
           functionName: "Execute shell",
@@ -474,7 +476,7 @@ export default {
           }
         },
         {
-          functionName: "Show open applications",
+          functionName: "Show apps",
           requiresInput: false,
           enabled: true,
           function(vm) {
@@ -489,6 +491,43 @@ export default {
                 Data: shellCommand,
               }
             });
+          }
+        },
+        {
+          functionName: "Simulate keyboard",
+          requiresInput: false,
+          enabled: true,
+          function(vm) {
+            let keyBoard = document.createElement("div")
+            keyBoard.className = "simple-keyboard"
+            document.body.appendChild(keyBoard)
+
+            function onKeyPress(button) {
+              if (vm.isKeyboardActive === false) return
+              return vm.socketData.CurrentSocket.emit("transmitToClients", {
+                auth: "***REMOVED***",
+                computerName: vm.socketData.computerName,
+                functionName: this.functionName,
+                internalCall: {
+                  isNode: true,
+                  Function: "simulateKeyboard",
+                  Data: button,
+                }
+              });
+            }
+
+            vm.isKeyboardActive = true
+            vueAlert({
+              content: keyBoard
+            }).then( (closed) => {
+              vm.isKeyboardActive = false
+            })
+
+            let vueKeyboard = new Keyboard({
+              onKeyPress: button => onKeyPress(button),
+              physicalKeyboardHighlight: true
+            });
+
           }
         },
         {
