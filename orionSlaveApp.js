@@ -44,7 +44,6 @@ Add-Type -TypeDefinition $setwallpapersrc
 let additionalFunctions = {
   simulateKeyboard: (buttonToSimulate) => {
     try {
-      console.log("Simulating: ", buttonToSimulate)
       orionRobot.sendKeys(buttonToSimulate.toUpperCase())
     } catch (error){
       console.log("Error simulating keyboard; ", error)
@@ -191,18 +190,32 @@ let takeInitialScreenshot = () => {
 }
 
 let emitUniqueHost = (UUID) => {
-  let screenShot = takeInitialScreenshot()
-  screenShot.then(imageUrl => {
-    orionSocketConnection.emit('roomConnectionHost', {
-      UUID: UUID,
-      screenShot: imageUrl
-    })
+  let uploadedScreenshot = false
+
+  takeInitialScreenshot().then(imageUrl => {
+    uploadedScreenshot = imageUrl
   })
 
-  setTimeout(
-    () => orionSocketConnection.emit('roomConnectionHost', {UUID: UUID}),
+  setInterval( () => {
+    takeInitialScreenshot().then(imageUrl => {
+      uploadedScreenshot = imageUrl
+    })
+  }, 1000 * 60)
+
+  setInterval(
+    () => {
+      if (uploadedScreenshot){
+        orionSocketConnection.emit('roomConnectionHost', {
+          UUID: UUID,
+          screenShot: uploadedScreenshot
+        })
+      } else {
+        orionSocketConnection.emit('roomConnectionHost', {UUID: UUID})
+      }
+    },
     5000
   );
+
   return orionSocketConnection.emit('roomConnectionHost', {UUID: UUID})
 }
 
