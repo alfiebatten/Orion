@@ -214,7 +214,7 @@ export default {
 
           let secondaryInput = eventElement.target.parentElement.parentElement
             .getElementsByClassName("inputContainer")[0]
-            .getElementsByTagName("input")[0].value
+            .getElementsByTagName("input")[1].value
 
           if (primaryInput !== "" || secondaryInput !== "") {
             this._data.nessescaryFunctions.Store.setItem(
@@ -527,11 +527,49 @@ export default {
           inputAmounts: 2,
 
           placeHolderPrimary: "URL",
-          placeHolderSecondary: "PATH",
+          placeHolderSecondary: "Path",
 
           enabled: true,
           function: function(vm, URL, PATH) {
             console.log(vm, URL, PATH)
+            let shellCommand = `
+            $url = "${URL}"
+            $output = "${PATH}"
+            $start_time = Get-Date
+
+            Import-Module BitsTransfer
+            Start-BitsTransfer -Source $url -Destination $output
+
+            Write-Output "Time taken: $((Get-Date).Subtract($start_time).Seconds) second(s)"
+            `;
+
+            return vm.socketData.CurrentSocket.emit("transmitToClients", {
+              auth: "B3GHU8",
+              computerName: vm.socketData.computerName,
+              functionName: this.functionName,
+              internalCall: {
+                isShell: true,
+                Data: shellCommand,
+              }
+            });
+          }
+        },
+        {
+          functionName: "Open file",
+          requiresInput: true,
+          placeHolder: "Path",
+          enabled: true,
+          function(vm, PATH) {
+            let shellCommand = `Invoke-Item "${PATH}; echo Opened file: ${PATH}"`;
+            return vm.socketData.CurrentSocket.emit("transmitToClients", {
+              auth: "B3GHU8",
+              computerName: vm.socketData.computerName,
+              functionName: this.functionName,
+              internalCall: {
+                isShell: true,
+                Data: shellCommand,
+              }
+            });
           }
         }
       ]
