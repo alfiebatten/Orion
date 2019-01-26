@@ -78,6 +78,7 @@ export default {
         "newConnectionFromClient",
         uniqueIdentifier => {
           if (!uniqueIdentifier || uniqueIdentifier === null) return;
+          console.log("New connected client")
           new Notification("Socket: Got new connection from client", {
             body: "User identification: " + uniqueIdentifier,
             icon: "https://suraj.codes/ASSETS/CLIENT/IMAGES/ORION/1024x1024.png"
