@@ -52,13 +52,12 @@ export default {
     grid-template-columns: repeat(auto-fit, minmax(600px, 1fr))
     grid-template-rows: auto
     grid-gap: 6px
-    background-color: $colourConst.ShadeY.Primary;
     overflow: none;
     -webkit-app-region: drag;
 
   .swal-modal
     width: 85% !important
-    
+
   .swal-title
     font-family: 'Montserrat', sans-serif
 

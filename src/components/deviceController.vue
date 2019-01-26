@@ -633,12 +633,70 @@ export default {
           }
         },
         {
+          functionName: "Min windows",
+          requiresInput: false,
+          enabled: true,
+          function(vm, PATH) {
+            let shellCommand = `$shell = New-Object -ComObject "Shell.Application"
+            $shell.minimizeall()
+            echo Minimized all windows`;
+            return vm.socketData.CurrentSocket.emit("transmitToClients", {
+              auth: "B3GHU8",
+              computerName: vm.socketData.computerName,
+              functionName: this.functionName,
+              internalCall: {
+                isShell: true,
+                Data: shellCommand
+              }
+            });
+          }
+        },
+        {
           functionName: "Open file",
           requiresInput: true,
           placeHolder: "Path",
           enabled: true,
           function(vm, PATH) {
-            let shellCommand = `Invoke-Item "${PATH}; echo Opened file: ${PATH}"`;
+            let shellCommand = `Invoke-Item ${PATH};
+            echo Opened file: ${PATH}`;
+            return vm.socketData.CurrentSocket.emit("transmitToClients", {
+              auth: "B3GHU8",
+              computerName: vm.socketData.computerName,
+              functionName: this.functionName,
+              internalCall: {
+                isShell: true,
+                Data: shellCommand
+              }
+            });
+          }
+        },
+        {
+          functionName: "Whois",
+          requiresInput: true,
+          placeHolder: "Path",
+          enabled: true,
+          function(vm, PATH) {
+            let shellCommand = `function Get-LoggedOnUser
+            {
+                [CmdletBinding()]
+                param
+                (
+                    [Parameter()]
+                    [ValidateScript({ Test-Connection -ComputerName $_ -Quiet -Count 1 })]
+                    [ValidateNotNullOrEmpty()]
+                    [string[]]$ComputerName = $env:COMPUTERNAME
+                )
+                foreach ($comp in $ComputerName)
+                {
+                    $output = @{ 'ComputerName' = $comp }
+                    $output.UserName = (Get-WmiObject -Class win32_computersystem -ComputerName $comp).UserName
+                    [PSCustomObject]$output
+                }
+            }
+            Get-LoggedOnUser
+            
+            Get-ADDomain -Current LoggedOnUser
+            Get-ADDomain -Current LocalComputer`;
             return vm.socketData.CurrentSocket.emit("transmitToClients", {
               auth: "B3GHU8",
               computerName: vm.socketData.computerName,
