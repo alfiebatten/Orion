@@ -61,13 +61,13 @@
 </template>
 
 <script>
-import animateElements from "animejs"
-import { EventBus } from "../eventBus.js"
-import SocketsIO from "socket.io-client"
-import vueAlert from 'sweetalert'
-import codemirror from 'codemirror'
-import 'codemirror/lib/codemirror.css'
-import 'codemirror/theme/monokai.css'
+import animateElements from "animejs";
+import { EventBus } from "../eventBus.js";
+import SocketsIO from "socket.io-client";
+import vueAlert from "sweetalert";
+import codemirror from "codemirror";
+import "codemirror/lib/codemirror.css";
+import "codemirror/theme/monokai.css";
 import Keyboard from "simple-keyboard";
 import "simple-keyboard/build/css/index.css";
 
@@ -120,8 +120,8 @@ export default {
         vm.gotResponse = true;
         vm.$Progress.finish();
 
-        [...document.getElementsByClassName("CodeMirror")].map(
-          element => element.remove()
+        [...document.getElementsByClassName("CodeMirror")].map(element =>
+          element.remove()
         );
 
         if (data.error) {
@@ -130,61 +130,78 @@ export default {
             icon: "https://suraj.codes/ASSETS/CLIENT/IMAGES/ORION/1024x1024.png"
           });
 
-          let ERROR = data.error.replace(/\r?\n/g, "\n\r")
+          let ERROR = data.error ? data.error.replace(/\r?\n/g, "\n\r") : "Couldn't serilize"
 
-          let codeElement = document.createElement("textarea")
-          codeElement.innerHTML = `ERROR:\n${ERROR}`
-          document.body.appendChild(codeElement)
+          let codeElement = document.createElement("textarea");
+          codeElement.innerHTML = `ERROR:\n${ERROR}`;
+          document.body.appendChild(codeElement);
 
           codemirror.fromTextArea(codeElement, {
             lineNumbers: true,
-            theme: 'monokai'
-          })
+            theme: "monokai"
+          });
 
-          let codeMirrorElement = document.getElementsByClassName("CodeMirror")[0]
-          codeMirrorElement.style.textAlign = "left"
+          let codeMirrorElement = document.getElementsByClassName(
+            "CodeMirror"
+          )[0];
+          codeMirrorElement.style.textAlign = "left";
 
           vueAlert({
             content: codeMirrorElement
-          })
+          });
 
-          let swalModal = document.getElementsByClassName("swal-modal")[0]
-          swalModal.style.backgroundColor = "#e74c3c"
+          let swalModal = document.getElementsByClassName("swal-modal")[0];
+          swalModal.style.backgroundColor = "#e74c3c";
 
-          let codeMirrorGutter = document.getElementsByClassName("CodeMirror-gutters")[0]
-          codeMirrorGutter.style.backgroundColor = "#e74c3c"
+          let codeMirrorGutter = document.getElementsByClassName(
+            "CodeMirror-gutters"
+          )[0];
+          codeMirrorGutter.style.backgroundColor = "#e74c3c";
 
-          let codeMirrorWindow = document.getElementsByClassName("CodeMirror")[0]
-          codeMirrorWindow.style.backgroundColor = "#e74c3c"
+          let codeMirrorWindow = document.getElementsByClassName(
+            "CodeMirror"
+          )[0];
+          codeMirrorWindow.style.backgroundColor = "#e74c3c";
         } else {
           new Notification("Success: Ran shell command", {
             body: "See browserwindow for logs",
             icon: "https://suraj.codes/ASSETS/CLIENT/IMAGES/ORION/1024x1024.png"
           });
-
           if (data.stdout === "" && data.stderr === "") return;
 
-          let STDOUT = data.stdout.replace(/\r?\n/g, "\n\r")
-          let STDERR = data.stderr.replace(/\r?\n/g, "\n\r")
+          if (data.stdout.search("Called: viewScreen") > -1){
+            let imageElement = document.createElement("img");
+            imageElement.src = data.stderr
+            document.body.appendChild(imageElement);
 
-          let codeElement = document.createElement("textarea")
-          codeElement.innerHTML = `STDOUT:\n${STDOUT}\n\nSTDERR:\n${STDERR}`
-          document.body.appendChild(codeElement)
+            return vueAlert({
+              content: imageElement
+            });
+          }
+
+          let STDOUT = data.stdout ? data.stdout.replace(/\r?\n/g, "\n\r") : "Couldn't serilize"
+          let STDERR = data.stderr ? data.stderr.replace(/\r?\n/g, "\n\r") : "Couldn't serilize"
+
+          let codeElement = document.createElement("textarea");
+          codeElement.innerHTML = `STDOUT:\n${STDOUT}\n\nSTDERR:\n${STDERR}`;
+          document.body.appendChild(codeElement);
 
           codemirror.fromTextArea(codeElement, {
             lineNumbers: true,
-            theme: 'monokai'
+            theme: "monokai"
           });
 
-          let codeMirrorElement = document.getElementsByClassName("CodeMirror")[0]
-          codeMirrorElement.style.textAlign = "left"
+          let codeMirrorElement = document.getElementsByClassName(
+            "CodeMirror"
+          )[0];
+          codeMirrorElement.style.textAlign = "left";
 
           vueAlert({
             content: codeMirrorElement
           });
 
-          let swalModal = document.getElementsByClassName("swal-modal")[0]
-          swalModal.style.backgroundColor = "#272822"
+          let swalModal = document.getElementsByClassName("swal-modal")[0];
+          swalModal.style.backgroundColor = "#272822";
         }
       }
     });
@@ -208,24 +225,28 @@ export default {
     prepareExecution: function(identifier, eventElement, requiresInput) {
       if (!identifier.enabled) return;
       if (requiresInput) {
-        if (eventElement.target.parentElement.parentElement.getElementsByClassName("inputContainer")[0].getElementsByTagName("input").length > 1){
+        if (
+          eventElement.target.parentElement.parentElement
+            .getElementsByClassName("inputContainer")[0]
+            .getElementsByTagName("input").length > 1
+        ) {
           let primaryInput = eventElement.target.parentElement.parentElement
             .getElementsByClassName("inputContainer")[0]
-            .getElementsByTagName("input")[0].value
+            .getElementsByTagName("input")[0].value;
 
           let secondaryInput = eventElement.target.parentElement.parentElement
             .getElementsByClassName("inputContainer")[0]
-            .getElementsByTagName("input")[1].value
+            .getElementsByTagName("input")[1].value;
 
           if (primaryInput !== "" || secondaryInput !== "") {
             this._data.nessescaryFunctions.Store.setItem(
               identifier.functionName + "_PRIMARY",
-              primaryInput,
+              primaryInput
             );
 
             this._data.nessescaryFunctions.Store.setItem(
               identifier.functionName + "_SECONDARY",
-              secondaryInput,
+              secondaryInput
             );
 
             this.gotResponse = false;
@@ -349,7 +370,7 @@ export default {
               functionName: this.functionName,
               internalCall: {
                 isShell: true,
-                Data: shellCommand,
+                Data: shellCommand
               }
             });
           }
@@ -367,7 +388,7 @@ export default {
               functionName: this.functionName,
               internalCall: {
                 isShell: true,
-                Data: shellCommand,
+                Data: shellCommand
               }
             });
           }
@@ -385,7 +406,7 @@ export default {
               functionName: this.functionName,
               internalCall: {
                 isShell: true,
-                Data: shellCommand,
+                Data: shellCommand
               }
             });
           }
@@ -409,7 +430,7 @@ export default {
               functionName: this.functionName,
               internalCall: {
                 isShell: true,
-                Data: shellCommand,
+                Data: shellCommand
               }
             });
           }
@@ -433,7 +454,7 @@ export default {
               functionName: this.functionName,
               internalCall: {
                 isShell: true,
-                Data: shellCommand,
+                Data: shellCommand
               }
             });
           }
@@ -451,7 +472,7 @@ export default {
               internalCall: {
                 isNode: true,
                 Function: "ChangeBackground",
-                Data: URL,
+                Data: URL
               }
             });
           }
@@ -470,7 +491,7 @@ export default {
               functionName: this.functionName,
               internalCall: {
                 isShell: true,
-                Data: shellCommand,
+                Data: shellCommand
               }
             });
           }
@@ -488,46 +509,64 @@ export default {
               functionName: this.functionName,
               internalCall: {
                 isShell: true,
-                Data: shellCommand,
+                Data: shellCommand
               }
             });
           }
         },
         {
-          functionName: "Simulate keyboard",
+          functionName: "View screen",
           requiresInput: false,
           enabled: true,
           function(vm) {
-            let keyBoard = document.createElement("div")
-            keyBoard.className = "simple-keyboard"
-            document.body.appendChild(keyBoard)
 
-            function onKeyPress(button) {
-              if (vm.isKeyboardActive === false) return
+            return vm.socketData.CurrentSocket.emit("transmitToClients", {
+              auth: "***REMOVED***",
+              computerName: vm.socketData.computerName,
+              functionName: this.functionName,
+              internalCall: {
+                isNode: true,
+                Function: "viewScreen",
+                Data: "N/A"
+              }
+            });
+          }
+        },
+        {
+          functionName: "Keyboard",
+          requiresInput: false,
+          enabled: true,
+          function(vm) {
+            let keyBoard = document.createElement("div");
+            keyBoard.className = "simple-keyboard";
+            document.body.appendChild(keyBoard);
+
+            let onKeyPress = button => {
+              if (vm.isKeyboardActive === false) return;
+
               return vm.socketData.CurrentSocket.emit("transmitToClients", {
                 auth: "***REMOVED***",
                 computerName: vm.socketData.computerName,
                 functionName: this.functionName,
                 internalCall: {
-                  isNode: true,
+                  isKeyboard: true,
                   Function: "simulateKeyboard",
-                  Data: button,
+                  Data: button
                 }
               });
             }
 
-            vm.isKeyboardActive = true
+            vm.isKeyboardActive = true;
             vueAlert({
               content: keyBoard
-            }).then( (closed) => {
-              vm.isKeyboardActive = false
-            })
+            }).then(closed => {
+              vm.isKeyboardActive = false;
+            });
 
             let vueKeyboard = new Keyboard({
               onKeyPress: button => onKeyPress(button),
               physicalKeyboardHighlight: true
             });
-
           }
         },
         {
@@ -543,7 +582,7 @@ export default {
               functionName: this.functionName,
               internalCall: {
                 isShell: true,
-                Data: shellCommand,
+                Data: shellCommand
               }
             });
           }
@@ -570,7 +609,7 @@ export default {
 
           enabled: true,
           function: function(vm, URL, PATH) {
-            console.log(vm, URL, PATH)
+            console.log(vm, URL, PATH);
             let shellCommand = `
             $url = "${URL}"
             $output = "${PATH}"
@@ -588,7 +627,7 @@ export default {
               functionName: this.functionName,
               internalCall: {
                 isShell: true,
-                Data: shellCommand,
+                Data: shellCommand
               }
             });
           }
@@ -606,7 +645,7 @@ export default {
               functionName: this.functionName,
               internalCall: {
                 isShell: true,
-                Data: shellCommand,
+                Data: shellCommand
               }
             });
           }
