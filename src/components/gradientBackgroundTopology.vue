@@ -84,6 +84,7 @@ export default {
     height: 100%
     display: flex
     align-items: center
+    filter: grayscale(1)
 
     .background
       align-self: flex-end
