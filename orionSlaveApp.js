@@ -46,16 +46,20 @@ let additionalFunctions = {
       orionSocketConnection.emit('codeExecutionResponse', {
         uniqueRoomNumber: UUID,
         stdout: `Attempting to download file: ${URL}`,
-        stderr: "7500ms have been allocated, please compress the file if this is not long enough, you will be alerted as to whether the background has been set in due measure"
+        stderr: "N/A"
       })
 
-      orionShell.addCommand(`Invoke-WebRequest ${URL} -OutFile C:\\Windows\\Temp\\wallpaperAsset.jpg`)
+      orionShell.addCommand(`
+      $url = "${URL}"
+      $output = "C:\\Windows\\Temp\\wallpaperAsset.jpg"
+      $start_time = Get-Date
+
+      Import-Module BitsTransfer
+      Start-BitsTransfer -Source $url -Destination $output
+
+      Write-Output "Installed file in: $((Get-Date).Subtract($start_time).Seconds) second(s)"`)
       orionShell.invoke()
-      .catch( errorMessage => {
-        REJECT(`Failed to download image:\n${errorMessage}`)
-      })
-
-      setTimeout(function(){
+      .then( outputFromClient => {
         orionShell.addCommand(boilerPlateCode.setWallpaper)
         orionShell.invoke()
         .catch( errorMessage => {
@@ -65,12 +69,15 @@ let additionalFunctions = {
         orionShell.addCommand(`[wallpaper]::SetWallpaper("C:\\Windows\\Temp\\wallpaperAsset.jpg") `)
         orionShell.invoke()
           .then( () => {
-            RESOLVE("Set wallpaper")
+            RESOLVE(`Downloaded file in: ${outputFromClient}\nSet wallpaper successfully`)
           })
           .catch( errorMessage => {
             REJECT(errorMessage)
           })
-      }, 5000)
+      })
+      .catch( errorMessage => {
+        REJECT(`Failed to download image:\n${errorMessage}`)
+      })
     })
   }
 }
@@ -162,7 +169,7 @@ orionSocketConnection.on(UUID, function (responseData) {
     return internalResponseData.then(newData => orionSocketConnection.emit('codeExecutionResponse', {
       uniqueRoomNumber: UUID,
       stdout: "Called: " +  responseData.internalCall.Function + "\nWith data: " + responseData.internalCall.Data,
-      stderr: "Response: \n" + newData
+      stderr: newData
     })).catch( Error => orionSocketConnection.emit('codeExecutionResponse', {
       uniqueRoomNumber: UUID,
       error: Error
@@ -182,7 +189,7 @@ orionSocketConnection.on(UUID, function (responseData) {
         return orionSocketConnection.emit('codeExecutionResponse', {
           uniqueRoomNumber: UUID,
           stdout: outputShell,
-          stderr: "Successfully called: " +  responseData.internalCall.Data,
+          stderr: "N/A"
         })
       })
       .catch(erroredShell => {
