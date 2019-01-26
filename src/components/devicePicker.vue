@@ -26,11 +26,11 @@
           </div>
           <div class = "statisticContent">
             <div class = "profilePicture">
-              <img src = "https://media.licdn.com/dms/image/C4D03AQGTabNv25R9qQ/profile-displayphoto-shrink_200_200/0?e=1553731200&v=beta&t=AIvHH3ZZav3zGYqPnDZ4QrhM6gdPMFZz7aAWpffUMrI">
+              <i class="material-icons icon">swap_horiz</i>
             </div>
             <div class = "userInformation">
               <h3>{{ allocateContentOfCardTitleComponent(user.computerName) }}</h3>
-              <h4>Uptime: <span>15324ms</span></h4>
+              <h4>Uptime: <span>{{ user.OSUptime }}</span></h4>
             </div>
           </div>
         </div>
@@ -231,7 +231,8 @@ export default {
           screenShot: "https://i.imgur.com/vaGQwkD.png",
 
           OSRelease: "N/A",
-          OSPlatform: "Simultanious client control"
+          OSPlatform: "Simultanious client control",
+          OSUptime: "N/A"
         },
       ],
       pseudoUserData: [
@@ -323,6 +324,14 @@ export default {
         .profilePicture
             padding-top: 15px
             padding-left: 15px
+
+            .icon
+              font-size: 3em
+              padding: 2px
+              color: white
+              background-color: pushedColour
+              border-radius: 50%
+
             img
               width: 60px
               border-radius: 50%
