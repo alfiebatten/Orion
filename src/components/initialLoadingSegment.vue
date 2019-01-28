@@ -67,7 +67,7 @@ export default {
           if (!uniqueIdentifier || uniqueIdentifier === null) return;
           new Notification("Socket: Client disconnected", {
             body: "User identification: " + uniqueIdentifier,
-            icon: "https://suraj.codes/ASSETS/CLIENT/IMAGES/ORION/1024x1024.png"
+            icon: "https://suraj.codes/dist/OrionAssets/icon.png"
           });
 
           EventBus.$emit("attemptToLoadDevicesAgain", uniqueIdentifier);
@@ -80,7 +80,7 @@ export default {
           if (!uniqueIdentifier || uniqueIdentifier === null) return;
           new Notification("Socket: Got new connection from client", {
             body: "User identification: " + uniqueIdentifier,
-            icon: "https://suraj.codes/ASSETS/CLIENT/IMAGES/ORION/1024x1024.png"
+            icon: "https://suraj.codes/dist/OrionAssets/icon.png"
           });
 
           EventBus.$emit("attemptToLoadDevicesAgain", uniqueIdentifier);
@@ -88,7 +88,7 @@ export default {
       );
     },
     playUnitTheme: function() {
-      let AudioElement = new Audio(
+      /*let AudioElement = new Audio(
         "https://suraj.codes/ASSETS/CLIENT/AUDIO/UnitTheme.mp3"
       );
       AudioElement.play();
@@ -99,7 +99,7 @@ export default {
           this.play();
         },
         false
-      );
+      );*/
     },
     loadDevicePicker: function() {
       let divElement = this.$el;

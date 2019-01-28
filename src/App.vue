@@ -63,4 +63,7 @@ export default {
 
   .swal-text
     font-family: 'Montserrat', sans-serif
+
+  *:focus
+    outline: none
 </style>

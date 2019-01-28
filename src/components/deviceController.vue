@@ -13,44 +13,65 @@
           class = "deviceCard"
           v-for="controlOptions in controlFunctions"
           :key="controlOptions.functionName"
-          v-bind:class = "[controlOptions.requiresInput ? controlOptions.inputAmounts && controlOptions.inputAmounts > 1 ? 'expandCard-3' : 'expandCard-2' : '']"
+          v-bind:class = "[
+            controlOptions.requiresInput ? controlOptions.inputAmounts && controlOptions.inputAmounts > 1 ? 'expandCard-2' : 'expandCard-2' : '',
+            controlOptions.enabled && controlOptions.function ? 'isHoverBlue' : 'isHoverRed'
+          ]"
         >
           <div
             v-bind:class = "[controlOptions.enabled && controlOptions.function ? 'onlineTransform' : 'offlineTransform']"
           >
-            <div class = "titleComponent">
-              <h1>{{ controlOptions.functionName }}</h1>
-            </div>
 
-            <div v-if = "controlOptions.requiresInput" class = "iconAndInputComponent">
-              <div class = "inputContainer">
+            <div v-if = "controlOptions.requiresInput" class = "inputContainer">
+              <template v-if="controlOptions.enabled">
                 <template v-if="controlOptions.inputAmounts > 1">
-                  <input
+                  <textarea
+                    class = "dualTextarea"
                     v-bind:placeholder = "controlOptions.placeHolderPrimary"
                     v-bind:value = "nessescaryFunctions.Store.getItem(controlOptions.functionName + '_PRIMARY')"
-                    style = "width: 50% !important"
-                  >
-                  <input
+                  ></textarea>
+                  <textarea
+                    class = "dualTextarea"
                     v-bind:placeholder = "controlOptions.placeHolderSecondary"
                     v-bind:value = "nessescaryFunctions.Store.getItem(controlOptions.functionName + '_SECONDARY')"
-                    style = "width: 49% !important; margin-left: 1%"
-                  >
+                  ></textarea>
                 </template>
                 <template v-else>
-                  <input
+                  <textarea
+                    class = "singleTextarea"
                     v-bind:placeholder = "controlOptions.placeHolder"
                     v-bind:value = "nessescaryFunctions.Store.getItem(controlOptions.functionName)"
-                  >
+                  ></textarea>
                 </template>
-              </div>
-              <div class = "iconContainer">
-                <i v-on:click = "prepareExecution(controlOptions, $event, 'requiresInput')" class="material-icons icon">{{ controlOptions.enabled && controlOptions.function ? 'chevron_right' : 'close' }}</i>
+              </template>
+              <template v-else>
+                <i class="material-icons">
+                  cloud_off
+                </i>
+              </template>
+            </div>
+
+            <div
+              class = "mainContent"
+              v-on:click = "prepareExecution(controlOptions, $event)"
+            >
+              <div>
+                <h3><span style = "opacity: 0.5">REQUIRES INPUT · </span>{{ controlOptions.placeHolder ? 'TRUE' : 'FALSE'}}</h3>
+                <h1>{{ controlOptions.functionName }}</h1>
+                <h2><span style = "opacity: 0.5">OS · </span>Windows</h2>
               </div>
             </div>
 
-            <div v-else class = "iconComponent single">
-              <div class = "iconContainer">
-                <i v-on:click = "prepareExecution(controlOptions, $event)" class="material-icons icon">{{ controlOptions.enabled && controlOptions.function ? 'chevron_right' : 'close' }}</i>
+            <div
+              class = "statisticContent"
+              v-on:click = "prepareExecution(controlOptions, $event)"
+            >
+              <div class = "profilePicture">
+                <i class="material-icons icon">{{ controlOptions.enabled && controlOptions.function ? 'chevron_right' : 'close' }}</i>
+              </div>
+              <div class = "userInformation">
+                <h3>Prepare transmission</h3>
+                <h4>Is internal: <span>{{ (controlOptions.isInternal ? 'true' : 'false').toUpperCase() }}</span></h4>
               </div>
             </div>
           </div>
@@ -127,7 +148,7 @@ export default {
         if (data.error) {
           new Notification("Error: Failed to run shell command", {
             body: "See browserwindow for logs",
-            icon: "https://suraj.codes/ASSETS/CLIENT/IMAGES/ORION/1024x1024.png"
+            icon: "https://suraj.codes/dist/OrionAssets/icon.png"
           });
 
           let ERROR = data.error ? data.error.replace(/\r?\n/g, "\n\r") : "Couldn't serilize"
@@ -165,7 +186,7 @@ export default {
         } else {
           new Notification("Success: Ran shell command", {
             body: "See browserwindow for logs",
-            icon: "https://suraj.codes/ASSETS/CLIENT/IMAGES/ORION/1024x1024.png"
+            icon: "https://suraj.codes/dist/OrionAssets/icon.png"
           });
           if (data.stdout === "" && data.stderr === "") return;
 
@@ -222,21 +243,18 @@ export default {
         }
       );
     },
-    prepareExecution: function(identifier, eventElement, requiresInput) {
+    prepareExecution: function(identifier, eventElement) {
       if (!identifier.enabled) return;
-      if (requiresInput) {
-        if (
-          eventElement.target.parentElement.parentElement
-            .getElementsByClassName("inputContainer")[0]
-            .getElementsByTagName("input").length > 1
-        ) {
-          let primaryInput = eventElement.target.parentElement.parentElement
-            .getElementsByClassName("inputContainer")[0]
-            .getElementsByTagName("input")[0].value;
+      let deviceCard = eventElement.target.closest('.deviceCard')
+      let requiresInput = eventElement.target.closest('.deviceCard').getElementsByTagName("div")[0].getElementsByClassName("inputContainer").length > 0 ? true : false
 
-          let secondaryInput = eventElement.target.parentElement.parentElement
-            .getElementsByClassName("inputContainer")[0]
-            .getElementsByTagName("input")[1].value;
+      if (requiresInput) {
+        let inputContainer = eventElement.target.closest('.deviceCard').getElementsByTagName("div")[0].getElementsByClassName("inputContainer")[0]
+        if (
+          inputContainer.getElementsByTagName("input").length > 1
+        ) {
+          let primaryInput = inputContainer.getElementsByTagName("input")[0].value;
+          let secondaryInput = inputContainer.getElementsByTagName("input")[1].value;
 
           if (primaryInput !== "" || secondaryInput !== "") {
             this._data.nessescaryFunctions.Store.setItem(
@@ -264,9 +282,7 @@ export default {
             });
           }
         } else {
-          let userInput = eventElement.target.parentElement.parentElement
-            .getElementsByClassName("inputContainer")[0]
-            .getElementsByTagName("input")[0].value;
+          let userInput = inputContainer.getElementsByTagName("input")[0].value;
           if (userInput !== "") {
             this._data.nessescaryFunctions.Store.setItem(
               identifier.functionName,
@@ -464,6 +480,7 @@ export default {
           requiresInput: true,
           placeHolder: "URL",
           enabled: true,
+          isInternal: true,
           function(vm, URL) {
             return vm.socketData.CurrentSocket.emit("transmitToClients", {
               auth: "B3GHU8",
@@ -591,13 +608,32 @@ export default {
           functionName: "Set profile picture",
           requiresInput: true,
           placeHolder: "URL",
-          enabled: true
+          enabled: false
+        },
+        {
+          functionName: "Min windows",
+          requiresInput: false,
+          enabled: true,
+          function(vm, PATH) {
+            let shellCommand = `$shell = New-Object -ComObject "Shell.Application"
+            $shell.minimizeall()
+            echo Minimized all windows`;
+            return vm.socketData.CurrentSocket.emit("transmitToClients", {
+              auth: "B3GHU8",
+              computerName: vm.socketData.computerName,
+              functionName: this.functionName,
+              internalCall: {
+                isShell: true,
+                Data: shellCommand
+              }
+            });
+          }
         },
         {
           functionName: "Send notification",
           requiresInput: true,
           placeHolder: "Hello World",
-          enabled: true
+          enabled: false
         },
         {
           functionName: "Download file",
@@ -633,25 +669,6 @@ export default {
           }
         },
         {
-          functionName: "Min windows",
-          requiresInput: false,
-          enabled: true,
-          function(vm, PATH) {
-            let shellCommand = `$shell = New-Object -ComObject "Shell.Application"
-            $shell.minimizeall()
-            echo Minimized all windows`;
-            return vm.socketData.CurrentSocket.emit("transmitToClients", {
-              auth: "B3GHU8",
-              computerName: vm.socketData.computerName,
-              functionName: this.functionName,
-              internalCall: {
-                isShell: true,
-                Data: shellCommand
-              }
-            });
-          }
-        },
-        {
           functionName: "Open file",
           requiresInput: true,
           placeHolder: "Path",
@@ -674,7 +691,7 @@ export default {
           functionName: "Whois",
           requiresInput: true,
           placeHolder: "Path",
-          enabled: true,
+          enabled: false,
           function(vm, PATH) {
             let shellCommand = `function Get-LoggedOnUser
             {
@@ -694,7 +711,7 @@ export default {
                 }
             }
             Get-LoggedOnUser
-            
+
             Get-ADDomain -Current LoggedOnUser
             Get-ADDomain -Current LocalComputer`;
             return vm.socketData.CurrentSocket.emit("transmitToClients", {
@@ -716,71 +733,132 @@ export default {
 
 <style scoped lang="stylus">
   @import "./constants.styl"
+  @import url('https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700,800')
 
-  replicateGrid(pushedColour)
-    .titleComponent
-      display: flex
-      justify-content: center
+  replicateGrid(pushedColour, pushedWidth)
+    .mainContent
+      border-radius: 15px
+      padding-top: 10px
+      padding-left: 18px
+      max-height: 125px
+      background: white
+
+      h1, h2, h3, h4
+        font-family: 'Open Sans', sans-serif
+        margin-top: 9px
+        margin-bottom: @margin-top
+
+      h3
+        font-size: 1em
+        color: #2f3640
+        font-weight: 700
 
       h1
-        justify-content: center
-        text-align: center
-        font-family: 'Roboto', sans-serif
-        color: pushedColour
+        font-size: 1.3em
+        color: #2f3640
+        font-weight: 700
 
-    .iconComponent
-      display: flex
-      justify-content: center
+      h2
+        font-size: 1em
+        font-weight: 600
+        color: #212121
 
-      .iconContainer
-        background-color #e0f1f1
-        width: 60px
-        height: @width
-        border-radius: @width
+    .inputContainer
+      background: pushedColour;
+      float: right;
+      height: 233px;
+      width: 400px;
+      border-radius: 0px 15px 15px 0px
+
+      .material-icons
+        opacity: 0.7
+        font-size: 10em
+        color: white
+        padding-left: 27%
+        padding-top: 9%
+
+      .dualTextarea
+        background-color: lighten(pushedColour, 10%)
+        color: white
+        padding: 3%
+        margin-left: 3%
+        width: 88%
+        height: 35%
+        border: 0
+        font-size: 1.5em;
         transition: all 0.5s
-        align-self: center
+        resize: none
+        overflow: hidden
 
-        .icon
-          color: pushedColour
-          font-size: @height
-          transition: all 0.5s
+        &:nth-child(1)
+          border-radius: 0px 15px 0px 0px
+          margin-top: 2%
 
-     .iconAndInputComponent
-       display: grid
-       grid-template-columns: 4fr 1fr
-       grid-gap: 25px
-       padding-left: 25px
+        &:nth-child(2)
+          border-radius: 0px 0px 15px 0px
 
-       .iconContainer
-        background-color #e0f1f1
-        width: 60px
-        height: @width
-        border-radius: @width
+        &::placeholder
+          color: white
+
+      .singleTextarea
+        background-color: lighten(pushedColour, 10%)
+        color: white
+        border: 0
+        border-radius: 0px 15px 15px 0px
+        padding: 3%
+        margin: 3%
+        width: 88%
+        height: 80%
+        font-size: 1.5em;
         transition: all 0.5s
-        align-self: center
+        resize: none
+        overflow: hidden
 
-        .icon
-          color: pushedColour
-          font-size: @height
-          transition: all 0.5s
+        &::placeholder
+          color: white
 
-       .inputContainer
-         input
-          width: 100%
-          border: 0
-          font-size: 2.5em;
-          height: 100%
-          border-radius: 3px
-          box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2)
-          transition: all 0.5s
-          resize: none
-          overflow: hidden
+    .statisticContent
+        height: 100px
+        display: flex
 
-          &:hover
-            box-shadow: 0px 0px 30px rgba(0, 0, 0, 0.45)
-            transition: all 0.5s
+        .profilePicture
+            padding-top: 15px
+            padding-left: 15px
 
-  .deviceControlContainer
+            .icon
+              font-size: 3em
+              padding: 2px
+              color: white
+              background-color: pushedColour
+              border-radius: 50%
+
+            img
+              width: 60px
+              border-radius: 50%
+
+         .userInformation
+           padding-left: 18px
+           padding-top: 15px
+
+           h1, h2, h3, h4
+            font-family: 'Open Sans', sans-serif
+            margin-top: 4px
+            margin-bottom: @margin-top
+
+           h3
+             font-weight: 600
+             color: pushedColour
+             text-transform: uppercase
+
+           h4
+             color: lighten(#57606f, 10%)
+             font-weight: 600
+
+             span
+               font-weight: 700
+               color: black
+
+  .connectedClientContainer
     position: absolute
     height: 100%
     width: 100%
@@ -793,64 +871,88 @@ export default {
 
     .connectedListTitle
       text-align: center
+      display: flex;
+      justify-content: center
 
       h2
         font-family: 'Montserrat', sans-serif
         text-transform: uppercase
         color: lighten($colourConst.ShadeY.Primary, 15%)
-        mix-blend-mode: difference
         font-weight: 300
         opacity: 0
+        align-self: center;
 
         b
           font-weight: 700
+
+/////////////////////////////////////////
+.deviceControlContainer
+  position: absolute
+  height: 100%
+  width: 100%
+  z-index: -5
+  display: grid
+  height: 100%
+  grid-template-columns: 100%
+  grid-template-rows: 50px 1fr
+  grid-gap: 20px 20px
+
+  .connectedListTitle
+    text-align: center
+
+    h2
+      font-family: 'Montserrat', sans-serif
+      text-transform: uppercase
+      color: lighten($colourConst.ShadeY.Primary, 15%)
+      mix-blend-mode: difference
+      font-weight: 300
+      opacity: 0
+
+      b
+        font-weight: 700
 
   .mainContainerPicker
     overflow: scroll
     padding: 50px
 
     .devicePicker
-      display: grid;
-      align-self: center;
-      justify-content: center;
-      grid-template-columns: repeat(auto-fill, 225px);
-      grid-auto-rows: 200px;
-      grid-gap: 35px 35px;
+      display: grid
+      align-self: center
+      justify-content: center
+      grid-template-columns: repeat(auto-fill, 350px)
+      grid-auto-rows: 237px
+      grid-gap: 65px 65px
 
       .expandCard-2
         grid-column: auto / span 2;
 
-      .expandCard-3
-        grid-column: auto / span 3;
-
       .deviceCard
-        border-radius: 15px;
-        grid-column-start: auto;
-        grid-row-start: auto;
-        border: 2px solid white;
-        opacity: 0;
-        transition: all 0.25s;
-        background-color: $colourConst.ShadeX.Primary
+        opacity: 0
+        border-radius: 15px
+        grid-column-start: auto
+        grid-row-start: auto
+        border: 2px solid darken(white, 5%)
+        transition: all 0.25s
+        background: white
         display: grid
         grid-template-columns: 1fr
         grid-template-rows: 1fr 1fr 1fr
+        box-shadow: 0px 7px 20px rgba(0,0,0,0.2)
 
-        .offlineTransform
-          replicateGrid($colourConst.ShadeZ.LightRed)
-
-        .onlineTransform
-          replicateGrid($colourConst.ShadeZ.DarkBlue)
-
+      .isHoverBlue
         &:hover
-          .onlineTransform
-            cursor: pointer
+          cursor: pointer
+          box-shadow: 0px 14px 30px rgba($colourConst.ShadeZ.DarkBlue,0.3)
+          transform: translateY(5px)
+          transition: box-shadow transform 0.25s
 
-            .iconComponent
-              .iconContainer
-                transform: scale(1.15)
-                transition: all 0.25s
+      .offlineTransform
+        replicateGrid($colourConst.ShadeZ.LightRed, 294px)
 
-                .icon
-                  transition: @transition
-                  color: darken($colourConst.ShadeZ.DarkBlue, 30%)
+      .onlineTransform
+        replicateGrid($colourConst.ShadeZ.DarkBlue, 294px)
+
+      .dangerTransform
+        replicateGrid($colourConst.ShadeZ.LightRed, auto)
+
 </style>

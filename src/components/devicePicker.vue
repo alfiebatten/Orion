@@ -17,19 +17,29 @@
           @contextmenu="contextMenuObserver($event)"
         >
           <div class = "imageComponent">
-            <img v-bind:src = "user.screenShot">
+            <img @contextmenu="contextMenuObserver($event)" v-bind:src = "user.screenShot">
           </div>
-          <div class = "mainContent">
+          <div
+            class = "mainContent"
+            @contextmenu="contextMenuObserver($event)"
+          >
             <h3><span style = "opacity: 0.5">IP ADDR · </span>{{ user.IP }}</h3>
             <h1>{{ user.OSPlatform }}</h1>
             <h2><span style = "opacity: 0.5">OS · </span>{{ user.OSRelease }}</h2>
           </div>
-          <div class = "statisticContent">
+          <div
+            class = "statisticContent"
+            @contextmenu="contextMenuObserver($event)"
+          >
             <div class = "profilePicture">
-              <i class="material-icons icon">swap_horiz</i>
+              <i @contextmenu="contextMenuObserver($event)" class="material-icons icon">swap_horiz</i>
             </div>
-            <div class = "userInformation">
-              <h3>{{ allocateContentOfCardTitleComponent(user.computerName) }}</h3>
+            <div
+              class = "userInformation">
+              <h3
+                @contextmenu="contextMenuObserver($event)"
+                v-bind:socketId = "user.computerName"
+              >{{ allocateContentOfCardTitleComponent(user.computerName) }}</h3>
               <h4>Uptime: <span>{{ user.OSUptime }}</span></h4>
             </div>
           </div>
@@ -85,22 +95,27 @@ export default {
   },
   methods: {
     contextMenuObserver: function(event){
-      let currentElementName = event.path[1].getElementsByTagName('h1')[0].innerHTML
+      if (!event.path[1].getElementsByClassName("userInformation")[0]) return
+
+      let currentElement = event.path[1].getElementsByClassName("userInformation")[0]
+        .getElementsByTagName("h3")[0]
+
       swal({
         title: "Rename card",
-        text: `Would you like to rename: ${currentElementName}`,
+        text: `Would you like to rename: ${currentElement.innerHTML}`,
         icon: "warning",
         buttons: true,
         dangerMode: true,
-      }).then( () => {
+      }).then( (shouldRename) => {
+        if (!shouldRename) return
         vueAlert("Input selection here", {
           content: "input",
         })
         .then((value) => {
           if (value === "null" || value === "" || !value) return
           vueAlert(`Synced: ${value} with system`);
-          event.path[1].getElementsByTagName('h1')[0].innerHTML = value;
-          window.localStorage.setItem(currentElementName, value);
+          currentElement.innerHTML = value;
+          window.localStorage.setItem(currentElement.getAttribute('socketid'), value);
         });
       })
       //
@@ -223,7 +238,7 @@ export default {
       },
       additionalDevices: [
         {
-          computerName: "ALL CLIENTS",
+          computerName: "EACHCLIENT",
           dangerMode: true,
           enabled: true,
 
@@ -231,7 +246,7 @@ export default {
           screenShot: "https://i.imgur.com/vaGQwkD.png",
 
           OSRelease: "N/A",
-          OSPlatform: "Simultanious client control",
+          OSPlatform: "Simultaneous client control",
           OSUptime: "N/A"
         },
       ],
@@ -311,6 +326,7 @@ export default {
       justify-content: center
 
       img
+        object-fit: cover
         display: block
         border-radius: 15px 15px 0px 0px
         max-height: 142px
@@ -319,7 +335,6 @@ export default {
     .statisticContent
         height: 100px
         display: flex
-        background: white
 
         .profilePicture
             padding-top: 15px
@@ -418,7 +433,7 @@ export default {
 
         &:hover
           cursor: pointer
-          box-shadow: 0px 14px 30px rgba(0,0,0,0.3)
+          box-shadow: 0px 14px 30px rgba($colourConst.ShadeZ.DarkBlue,0.3)
           transform: translateY(5px)
           transition: box-shadow transform 0.25s
 
