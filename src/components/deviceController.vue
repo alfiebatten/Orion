@@ -390,7 +390,7 @@ export default {
           enabled: true,
           function: function(vm, shellCommand) {
             return vm.socketData.CurrentSocket.emit("transmitToClients", {
-              auth: "B3GHU8",
+              auth: "",
               computerName: vm.socketData.computerName,
               functionName: this.functionName,
               internalCall: {
@@ -408,7 +408,7 @@ export default {
             let shellCommand = `Stop-Computer`;
 
             return vm.socketData.CurrentSocket.emit("transmitToClients", {
-              auth: "B3GHU8",
+              auth: "",
               computerName: vm.socketData.computerName,
               functionName: this.functionName,
               internalCall: {
@@ -426,7 +426,7 @@ export default {
             let shellCommand = `Restart-Computer`;
 
             return vm.socketData.CurrentSocket.emit("transmitToClients", {
-              auth: "B3GHU8",
+              auth: "",
               computerName: vm.socketData.computerName,
               functionName: this.functionName,
               internalCall: {
@@ -450,7 +450,7 @@ export default {
             `;
 
             return vm.socketData.CurrentSocket.emit("transmitToClients", {
-              auth: "B3GHU8",
+              auth: "",
               computerName: vm.socketData.computerName,
               functionName: this.functionName,
               internalCall: {
@@ -474,7 +474,7 @@ export default {
             `;
 
             return vm.socketData.CurrentSocket.emit("transmitToClients", {
-              auth: "B3GHU8",
+              auth: "",
               computerName: vm.socketData.computerName,
               functionName: this.functionName,
               internalCall: {
@@ -492,7 +492,7 @@ export default {
           isInternal: true,
           function(vm, URL) {
             return vm.socketData.CurrentSocket.emit("transmitToClients", {
-              auth: "B3GHU8",
+              auth: "",
               computerName: vm.socketData.computerName,
               functionName: this.functionName,
               internalCall: {
@@ -512,7 +512,7 @@ export default {
             let shellCommand = `start ${URL}`;
 
             return vm.socketData.CurrentSocket.emit("transmitToClients", {
-              auth: "B3GHU8",
+              auth: "",
               computerName: vm.socketData.computerName,
               functionName: this.functionName,
               internalCall: {
@@ -530,7 +530,7 @@ export default {
             let shellCommand = `gps | ? {$_.mainwindowhandle -ne 0} | select name, mainwindowtitle`;
 
             return vm.socketData.CurrentSocket.emit("transmitToClients", {
-              auth: "B3GHU8",
+              auth: "",
               computerName: vm.socketData.computerName,
               functionName: this.functionName,
               internalCall: {
@@ -547,7 +547,7 @@ export default {
           function(vm) {
 
             return vm.socketData.CurrentSocket.emit("transmitToClients", {
-              auth: "B3GHU8",
+              auth: "",
               computerName: vm.socketData.computerName,
               functionName: this.functionName,
               internalCall: {
@@ -566,7 +566,7 @@ export default {
             let shellCommand = `$sh = New-Object -ComObject "Shell.Application"
             $sh.Namespace(17).Items() |  Where-Object { $.Type -eq "CD Drive" } | foreach { $.InvokeVerb("Eject") }`;
             return vm.socketData.CurrentSocket.emit("transmitToClients", {
-              auth: "B3GHU8",
+              auth: "",
               computerName: vm.socketData.computerName,
               functionName: this.functionName,
               internalCall: {
@@ -589,7 +589,7 @@ export default {
               if (vm.isKeyboardActive === false) return;
 
               return vm.socketData.CurrentSocket.emit("transmitToClients", {
-                auth: "B3GHU8",
+                auth: "",
                 computerName: vm.socketData.computerName,
                 functionName: this.functionName,
                 internalCall: {
